@@ -1,0 +1,1599 @@
+{
+  "variance_ratio_tests": [
+    {
+      "ticker": "PRES-2024-DJT",
+      "k": 2,
+      "vr": 0.5251888760703666,
+      "m2_statistic": -39557.97439409301,
+      "p_value": 0.0,
+      "n_observations": 287493
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "k": 5,
+      "vr": 0.22403593717933862,
+      "m2_statistic": -31085.067955710354,
+      "p_value": 0.0,
+      "n_observations": 287493
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "k": 10,
+      "vr": 0.11738701032529515,
+      "m2_statistic": -23765.35044283935,
+      "p_value": 0.0,
+      "n_observations": 287493
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "k": 20,
+      "vr": 0.06227509781063154,
+      "m2_statistic": -17581.92134554872,
+      "p_value": 0.0,
+      "n_observations": 287493
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "k": 2,
+      "vr": 0.5541642814876891,
+      "m2_statistic": -36662.834452779585,
+      "p_value": 0.0,
+      "n_observations": 213960
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "k": 5,
+      "vr": 0.24728651439318688,
+      "m2_statistic": -30887.015092143985,
+      "p_value": 0.0,
+      "n_observations": 213960
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "k": 10,
+      "vr": 0.13303832332131046,
+      "m2_statistic": -24685.911343860676,
+      "p_value": 0.0,
+      "n_observations": 213960
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "k": 20,
+      "vr": 0.07274926588846299,
+      "m2_statistic": -18934.584184303032,
+      "p_value": 0.0,
+      "n_observations": 213960
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "k": 2,
+      "vr": 0.6569739537994844,
+      "m2_statistic": -13240.289315054813,
+      "p_value": 0.0,
+      "n_observations": 149604
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "k": 5,
+      "vr": 0.3613495227035692,
+      "m2_statistic": -12273.621666459056,
+      "p_value": 0.0,
+      "n_observations": 149604
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "k": 10,
+      "vr": 0.20873935456586767,
+      "m2_statistic": -10751.993856715377,
+      "p_value": 0.0,
+      "n_observations": 149604
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "k": 20,
+      "vr": 0.12400804027687859,
+      "m2_statistic": -8704.611195235615,
+      "p_value": 0.0,
+      "n_observations": 149604
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "k": 2,
+      "vr": 0.5647395675022777,
+      "m2_statistic": -15720.799045705044,
+      "p_value": 0.0,
+      "n_observations": 103817
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "k": 5,
+      "vr": 0.25086508101667715,
+      "m2_statistic": -12775.344112821322,
+      "p_value": 0.0,
+      "n_observations": 103817
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "k": 10,
+      "vr": 0.14462573367383008,
+      "m2_statistic": -9980.340790703223,
+      "p_value": 0.0,
+      "n_observations": 103817
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "k": 20,
+      "vr": 0.08769166698487935,
+      "m2_statistic": -7766.542015930437,
+      "p_value": 0.0,
+      "n_observations": 103817
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "k": 2,
+      "vr": 0.6274938078213051,
+      "m2_statistic": -4338.268699415873,
+      "p_value": 0.0,
+      "n_observations": 91858
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "k": 5,
+      "vr": 0.31869536873139526,
+      "m2_statistic": -4011.1412588670273,
+      "p_value": 0.0,
+      "n_observations": 91858
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "k": 10,
+      "vr": 0.2019534693541895,
+      "m2_statistic": -3274.08325218157,
+      "p_value": 0.0,
+      "n_observations": 91858
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "k": 20,
+      "vr": 0.12954687654783548,
+      "m2_statistic": -2635.3639067885583,
+      "p_value": 0.0,
+      "n_observations": 91858
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "k": 2,
+      "vr": 0.5964999515597694,
+      "m2_statistic": -6046.893716313309,
+      "p_value": 0.0,
+      "n_observations": 87728
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "k": 5,
+      "vr": 0.30097573955920115,
+      "m2_statistic": -5367.563541421128,
+      "p_value": 0.0,
+      "n_observations": 87728
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "k": 10,
+      "vr": 0.18294352130458136,
+      "m2_statistic": -4302.294806598855,
+      "p_value": 0.0,
+      "n_observations": 87728
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "k": 20,
+      "vr": 0.1251611660607326,
+      "m2_statistic": -3349.5071156641475,
+      "p_value": 0.0,
+      "n_observations": 87728
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "k": 2,
+      "vr": 0.6474920253298116,
+      "m2_statistic": -5590.777878007682,
+      "p_value": 0.0,
+      "n_observations": 87245
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "k": 5,
+      "vr": 0.38082352126455393,
+      "m2_statistic": -5118.91395205678,
+      "p_value": 0.0,
+      "n_observations": 87245
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "k": 10,
+      "vr": 0.2528257729659995,
+      "m2_statistic": -4594.895194794907,
+      "p_value": 0.0,
+      "n_observations": 87245
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "k": 20,
+      "vr": 0.15646525870451114,
+      "m2_statistic": -3912.9802455256226,
+      "p_value": 0.0,
+      "n_observations": 87245
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "k": 2,
+      "vr": 0.6340099969745427,
+      "m2_statistic": -5490.830091921607,
+      "p_value": 0.0,
+      "n_observations": 81845
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "k": 5,
+      "vr": 0.30138125051137277,
+      "m2_statistic": -4662.271941834009,
+      "p_value": 0.0,
+      "n_observations": 81845
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "k": 10,
+      "vr": 0.17916059870042228,
+      "m2_statistic": -3867.8239001102684,
+      "p_value": 0.0,
+      "n_observations": 81845
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "k": 20,
+      "vr": 0.10496192367427161,
+      "m2_statistic": -3159.0982255824465,
+      "p_value": 0.0,
+      "n_observations": 81845
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "k": 2,
+      "vr": 0.6198334659898702,
+      "m2_statistic": -2524.192634967875,
+      "p_value": 0.0,
+      "n_observations": 78835
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "k": 5,
+      "vr": 0.3242326958759591,
+      "m2_statistic": -2158.9582816172956,
+      "p_value": 0.0,
+      "n_observations": 78835
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "k": 10,
+      "vr": 0.21004548036866588,
+      "m2_statistic": -1750.9861194987213,
+      "p_value": 0.0,
+      "n_observations": 78835
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "k": 20,
+      "vr": 0.12878519782962242,
+      "m2_statistic": -1419.6423879408737,
+      "p_value": 0.0,
+      "n_observations": 78835
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "k": 2,
+      "vr": 0.6353708212527769,
+      "m2_statistic": -5082.79806461073,
+      "p_value": 0.0,
+      "n_observations": 78115
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "k": 5,
+      "vr": 0.29653232705046123,
+      "m2_statistic": -3623.520983993823,
+      "p_value": 0.0,
+      "n_observations": 78115
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "k": 10,
+      "vr": 0.1767686224086413,
+      "m2_statistic": -2707.230791041999,
+      "p_value": 0.0,
+      "n_observations": 78115
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "k": 20,
+      "vr": 0.10512736215505698,
+      "m2_statistic": -2314.8599112989996,
+      "p_value": 0.0,
+      "n_observations": 78115
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT20TBDET-TB",
+      "k": 2,
+      "vr": 0.5799494412688709,
+      "m2_statistic": -3639.4229860735286,
+      "p_value": 0.0,
+      "n_observations": 75914
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT20TBDET-TB",
+      "k": 5,
+      "vr": 0.312089911229095,
+      "m2_statistic": -2842.485380824901,
+      "p_value": 0.0,
+      "n_observations": 75914
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT20TBDET-TB",
+      "k": 10,
+      "vr": 0.1966305034194591,
+      "m2_statistic": -2280.660722633258,
+      "p_value": 0.0,
+      "n_observations": 75914
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT20TBDET-TB",
+      "k": 20,
+      "vr": 0.1424633913628339,
+      "m2_statistic": -1797.5201342310138,
+      "p_value": 0.0,
+      "n_observations": 75914
+    },
+    {
+      "ticker": "KXMARMAD-25-FL",
+      "k": 2,
+      "vr": 0.5832539855856291,
+      "m2_statistic": -5057.390077918027,
+      "p_value": 0.0,
+      "n_observations": 72591
+    },
+    {
+      "ticker": "KXMARMAD-25-FL",
+      "k": 5,
+      "vr": 0.2892153108770775,
+      "m2_statistic": -4347.974581280546,
+      "p_value": 0.0,
+      "n_observations": 72591
+    },
+    {
+      "ticker": "KXMARMAD-25-FL",
+      "k": 10,
+      "vr": 0.16742566390826305,
+      "m2_statistic": -3584.3088069598657,
+      "p_value": 0.0,
+      "n_observations": 72591
+    },
+    {
+      "ticker": "KXMARMAD-25-FL",
+      "k": 20,
+      "vr": 0.1099155595793733,
+      "m2_statistic": -2785.421800795091,
+      "p_value": 0.0,
+      "n_observations": 72591
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-GB",
+      "k": 2,
+      "vr": 0.6118336131408766,
+      "m2_statistic": -4067.1426046700435,
+      "p_value": 0.0,
+      "n_observations": 72015
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-GB",
+      "k": 5,
+      "vr": 0.3167913403690283,
+      "m2_statistic": -3552.4073954893734,
+      "p_value": 0.0,
+      "n_observations": 72015
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-GB",
+      "k": 10,
+      "vr": 0.19196234745560795,
+      "m2_statistic": -3065.1152075120194,
+      "p_value": 0.0,
+      "n_observations": 72015
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-GB",
+      "k": 20,
+      "vr": 0.1256465951687712,
+      "m2_statistic": -2541.782901816521,
+      "p_value": 0.0,
+      "n_observations": 72015
+    },
+    {
+      "ticker": "KXNBA-25-OKC",
+      "k": 2,
+      "vr": 0.5615087596106795,
+      "m2_statistic": -13613.007692297077,
+      "p_value": 0.0,
+      "n_observations": 69501
+    },
+    {
+      "ticker": "KXNBA-25-OKC",
+      "k": 5,
+      "vr": 0.2599491570202216,
+      "m2_statistic": -11458.215576499568,
+      "p_value": 0.0,
+      "n_observations": 69501
+    },
+    {
+      "ticker": "KXNBA-25-OKC",
+      "k": 10,
+      "vr": 0.15741797107233502,
+      "m2_statistic": -9005.960404901021,
+      "p_value": 0.0,
+      "n_observations": 69501
+    },
+    {
+      "ticker": "KXNBA-25-OKC",
+      "k": 20,
+      "vr": 0.10571698164004123,
+      "m2_statistic": -6978.705576924171,
+      "p_value": 0.0,
+      "n_observations": 69501
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT13BUFATL-BUF",
+      "k": 2,
+      "vr": 0.6046308769371117,
+      "m2_statistic": -2721.0722614904967,
+      "p_value": 0.0,
+      "n_observations": 69473
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT13BUFATL-BUF",
+      "k": 5,
+      "vr": 0.3178850699406447,
+      "m2_statistic": -2466.6497568040945,
+      "p_value": 0.0,
+      "n_observations": 69473
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT13BUFATL-BUF",
+      "k": 10,
+      "vr": 0.18768800094093888,
+      "m2_statistic": -2009.299031301054,
+      "p_value": 0.0,
+      "n_observations": 69473
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT13BUFATL-BUF",
+      "k": 20,
+      "vr": 0.13142422503705423,
+      "m2_statistic": -1542.239010353012,
+      "p_value": 0.0,
+      "n_observations": 69473
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP08MINCHI-MIN",
+      "k": 2,
+      "vr": 0.5869970932021404,
+      "m2_statistic": -11470.1332385411,
+      "p_value": 0.0,
+      "n_observations": 68980
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP08MINCHI-MIN",
+      "k": 5,
+      "vr": 0.28403382120277915,
+      "m2_statistic": -9849.758989374379,
+      "p_value": 0.0,
+      "n_observations": 68980
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP08MINCHI-MIN",
+      "k": 10,
+      "vr": 0.16350512359336927,
+      "m2_statistic": -7853.955923015132,
+      "p_value": 0.0,
+      "n_observations": 68980
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP08MINCHI-MIN",
+      "k": 20,
+      "vr": 0.09940421130696526,
+      "m2_statistic": -6041.217205505245,
+      "p_value": 0.0,
+      "n_observations": 68980
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT12DETKC-DET",
+      "k": 2,
+      "vr": 0.5578663712588368,
+      "m2_statistic": -9401.623465525507,
+      "p_value": 0.0,
+      "n_observations": 68546
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT12DETKC-DET",
+      "k": 5,
+      "vr": 0.26345109287678464,
+      "m2_statistic": -8302.94293130741,
+      "p_value": 0.0,
+      "n_observations": 68546
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT12DETKC-DET",
+      "k": 10,
+      "vr": 0.15628224362338833,
+      "m2_statistic": -6914.48900176885,
+      "p_value": 0.0,
+      "n_observations": 68546
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT12DETKC-DET",
+      "k": 20,
+      "vr": 0.10051702559623972,
+      "m2_statistic": -5643.499225723873,
+      "p_value": 0.0,
+      "n_observations": 68546
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP22DETBAL-DET",
+      "k": 2,
+      "vr": 0.5485785816364538,
+      "m2_statistic": -13709.114732571821,
+      "p_value": 0.0,
+      "n_observations": 67851
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP22DETBAL-DET",
+      "k": 5,
+      "vr": 0.2528052723539926,
+      "m2_statistic": -11107.795315275816,
+      "p_value": 0.0,
+      "n_observations": 67851
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP22DETBAL-DET",
+      "k": 10,
+      "vr": 0.14588043103277373,
+      "m2_statistic": -8770.105932060718,
+      "p_value": 0.0,
+      "n_observations": 67851
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP22DETBAL-DET",
+      "k": 20,
+      "vr": 0.09733832641414318,
+      "m2_statistic": -6689.685835050488,
+      "p_value": 0.0,
+      "n_observations": 67851
+    },
+    {
+      "ticker": "KXNFLGAME-25NOV03ARIDAL-DAL",
+      "k": 2,
+      "vr": 0.5918330384700906,
+      "m2_statistic": -12002.729072815102,
+      "p_value": 0.0,
+      "n_observations": 65487
+    },
+    {
+      "ticker": "KXNFLGAME-25NOV03ARIDAL-DAL",
+      "k": 5,
+      "vr": 0.29069113811564307,
+      "m2_statistic": -9275.6566678114,
+      "p_value": 0.0,
+      "n_observations": 65487
+    },
+    {
+      "ticker": "KXNFLGAME-25NOV03ARIDAL-DAL",
+      "k": 10,
+      "vr": 0.17473967741084867,
+      "m2_statistic": -7134.1471494405105,
+      "p_value": 0.0,
+      "n_observations": 65487
+    },
+    {
+      "ticker": "KXNFLGAME-25NOV03ARIDAL-DAL",
+      "k": 20,
+      "vr": 0.11873765812735138,
+      "m2_statistic": -5620.053088844347,
+      "p_value": 0.0,
+      "n_observations": 65487
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT09PHINYG-PHI",
+      "k": 2,
+      "vr": 0.6549280519546923,
+      "m2_statistic": -11603.425252225768,
+      "p_value": 0.0,
+      "n_observations": 64698
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT09PHINYG-PHI",
+      "k": 5,
+      "vr": 0.3845645314042503,
+      "m2_statistic": -2698.334583984336,
+      "p_value": 0.0,
+      "n_observations": 64698
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT09PHINYG-PHI",
+      "k": 10,
+      "vr": 0.2409218368469215,
+      "m2_statistic": -2050.9934941959004,
+      "p_value": 0.0,
+      "n_observations": 64698
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT09PHINYG-PHI",
+      "k": 20,
+      "vr": 0.1342714201910084,
+      "m2_statistic": -1581.9688332016012,
+      "p_value": 0.0,
+      "n_observations": 64698
+    }
+  ],
+  "rolls_spread_tests": [
+    {
+      "ticker": "PRES-2024-DJT",
+      "implied_spread": 0.008014620846284052,
+      "autocovariance": -1.605853682742272e-05,
+      "n_trades": 287494
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "implied_spread": 0.008188650079712822,
+      "autocovariance": -1.6763497531995202e-05,
+      "n_trades": 213961
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "implied_spread": 0.01434827396135703,
+      "autocovariance": -5.1468241417539045e-05,
+      "n_trades": 149605
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "implied_spread": 0.009710893698465763,
+      "autocovariance": -2.3575364105725514e-05,
+      "n_trades": 103818
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "implied_spread": 0.017111870841093824,
+      "autocovariance": -7.320403092056926e-05,
+      "n_trades": 91859
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "implied_spread": 0.012095049090794223,
+      "autocovariance": -3.657255312718054e-05,
+      "n_trades": 87729
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "implied_spread": 0.014909135944172184,
+      "autocovariance": -5.557058365045175e-05,
+      "n_trades": 87246
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "implied_spread": 0.013333319991912508,
+      "autocovariance": -4.444435550168345e-05,
+      "n_trades": 81846
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "implied_spread": 0.017195485514991685,
+      "autocovariance": -7.392118052407223e-05,
+      "n_trades": 78836
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "implied_spread": 0.012488475792362723,
+      "autocovariance": -3.899050690410744e-05,
+      "n_trades": 78116
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT20TBDET-TB",
+      "implied_spread": 0.006926855125059391,
+      "autocovariance": -1.1995330480890388e-05,
+      "n_trades": 75915
+    },
+    {
+      "ticker": "KXMARMAD-25-FL",
+      "implied_spread": 0.013481884978697388,
+      "autocovariance": -4.5440305644706564e-05,
+      "n_trades": 72592
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-GB",
+      "implied_spread": 0.012996600883949206,
+      "autocovariance": -4.2227908634167325e-05,
+      "n_trades": 72016
+    },
+    {
+      "ticker": "KXNBA-25-OKC",
+      "implied_spread": 0.011588154874204127,
+      "autocovariance": -3.357133334713522e-05,
+      "n_trades": 69502
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT13BUFATL-BUF",
+      "implied_spread": 0.009123262672894735,
+      "autocovariance": -2.0808480449658595e-05,
+      "n_trades": 69474
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP08MINCHI-MIN",
+      "implied_spread": 0.009993702678782853,
+      "autocovariance": -2.496852330797789e-05,
+      "n_trades": 68981
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT12DETKC-DET",
+      "implied_spread": 0.008138433433408887,
+      "autocovariance": -1.6558524687506892e-05,
+      "n_trades": 68547
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP22DETBAL-DET",
+      "implied_spread": 0.009764810435922184,
+      "autocovariance": -2.38378807123737e-05,
+      "n_trades": 67852
+    },
+    {
+      "ticker": "KXNFLGAME-25NOV03ARIDAL-DAL",
+      "implied_spread": 0.0068174522700101626,
+      "autocovariance": -1.1619413863466679e-05,
+      "n_trades": 65488
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT09PHINYG-PHI",
+      "implied_spread": 0.0087187404001568,
+      "autocovariance": -1.9004108541331586e-05,
+      "n_trades": 64699
+    }
+  ],
+  "gpd_tail_fitting": {
+    "kalshi": {
+      "upper_tail": {
+        "threshold": 0.8799999999999999,
+        "shape_xi": -1.5285594413287589,
+        "scale_sigma": 0.15285594413287604,
+        "n_exceedances": 24833,
+        "ks_statistic": 0.4161469682450629,
+        "ks_pvalue": 0.0,
+        "tail": "upper"
+      },
+      "lower_tail": {
+        "threshold": 0.8799999999999999,
+        "shape_xi": -1.5285594413287589,
+        "scale_sigma": 0.15285594413287604,
+        "n_exceedances": 24840,
+        "ks_statistic": 0.41650536555973683,
+        "ks_pvalue": 0.0,
+        "tail": "lower"
+      },
+      "n_price_changes": 499999
+    },
+    "polymarket": {
+      "upper_tail": {
+        "threshold": 0.07999995684083246,
+        "shape_xi": -0.19495656709999742,
+        "scale_sigma": 0.19856160380509932,
+        "n_exceedances": 25000,
+        "ks_statistic": 0.3778477917201309,
+        "ks_pvalue": 0.0,
+        "tail": "upper"
+      },
+      "lower_tail": {
+        "threshold": 0.07900000221028733,
+        "shape_xi": -0.19674613297802218,
+        "scale_sigma": 0.20083041179846883,
+        "n_exceedances": 25000,
+        "ks_statistic": 0.37119022981553446,
+        "ks_pvalue": 0.0,
+        "tail": "lower"
+      },
+      "n_price_changes": 499999
+    }
+  },
+  "bds_tests": [
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 2,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 5.7831184039997305,
+      "p_value": 7.332841158003387e-09,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 3,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 6.656849346980854,
+      "p_value": 2.7975968139649645e-11,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 4,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 6.5094489377707445,
+      "p_value": 7.542698882081487e-11,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 5,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 6.2632654346939045,
+      "p_value": 3.769980804956821e-10,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 2,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 5.7831184039997305,
+      "p_value": 7.332841158003387e-09,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 3,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 6.656849346980854,
+      "p_value": 2.7975968139649645e-11,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 4,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 6.5094489377707445,
+      "p_value": 7.542698882081487e-11,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 5,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 6.2632654346939045,
+      "p_value": 3.769980804956821e-10,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 2,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 1.8705573704963447,
+      "p_value": 0.06140645802671821,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 3,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.123035164582175,
+      "p_value": 0.03375090527456941,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 4,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.205772893201249,
+      "p_value": 0.027399905153586424,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-DJT",
+      "m": 5,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.0151667662845254,
+      "p_value": 0.043887178440364716,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 2,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 5.814012558512977,
+      "p_value": 6.0992835408966416e-09,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 3,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 5.592758784739382,
+      "p_value": 2.2348968537144104e-08,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 4,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 5.272375327791871,
+      "p_value": 1.3466931612850187e-07,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 5,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 5.276027885241899,
+      "p_value": 1.3201400877277953e-07,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 2,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 5.814012558512977,
+      "p_value": 6.0992835408966416e-09,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 3,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 5.592758784739382,
+      "p_value": 2.2348968537144104e-08,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 4,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 5.272375327791871,
+      "p_value": 1.3466931612850187e-07,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 5,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 5.276027885241899,
+      "p_value": 1.3201400877277953e-07,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 2,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.044240183518148,
+      "p_value": 0.04092982525354162,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 3,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.18543915704122,
+      "p_value": 0.028856662461520938,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 4,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.136414454592689,
+      "p_value": 0.0326456469053953,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "m": 5,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 2.287221568754379,
+      "p_value": 0.022182893695243802,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 2,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 9.549530305745233,
+      "p_value": 1.3028561892110228e-21,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 3,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 10.938456241178674,
+      "p_value": 7.547408142944448e-28,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 4,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 12.635702594334203,
+      "p_value": 1.3419013432254167e-36,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 5,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 14.470975137567653,
+      "p_value": 1.848330395722092e-47,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 2,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 12.6488690685745,
+      "p_value": 1.1349679012027193e-36,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 3,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 13.424849912337928,
+      "p_value": 4.3245962516811554e-41,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 4,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 14.83316571605996,
+      "p_value": 8.941475797804827e-50,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 5,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 15.986602833573667,
+      "p_value": 1.5843869917897543e-57,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 2,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 11.110962149670799,
+      "p_value": 1.109574622500141e-28,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 3,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 11.48570137361033,
+      "p_value": 1.5566697898946254e-30,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 4,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 12.334305163973907,
+      "p_value": 5.919737498754869e-35,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "m": 5,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 13.324074858990834,
+      "p_value": 1.6769870930680738e-40,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 2,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 10.673942756550698,
+      "p_value": 1.3478304419555238e-26,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 3,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 14.638611764849093,
+      "p_value": 1.5928738925557623e-48,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 4,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 19.51625047278361,
+      "p_value": 7.989030075645815e-85,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 5,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 24.134886598545137,
+      "p_value": 1.076114818568886e-128,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 2,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 10.761998243304145,
+      "p_value": 5.20295460195856e-27,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 3,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 12.771582907642191,
+      "p_value": 2.362995326583475e-37,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 4,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 14.52873804218495,
+      "p_value": 7.967472647633329e-48,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 5,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 16.066793766957822,
+      "p_value": 4.3606511943113204e-58,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 2,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 14.427391446247325,
+      "p_value": 3.4799558458345863e-47,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 3,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 17.697256612860727,
+      "p_value": 4.4023649540629223e-70,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 4,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 19.820023652183984,
+      "p_value": 2.0001468856848052e-87,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "m": 5,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 21.37715454484895,
+      "p_value": 2.1802413746003682e-101,
+      "n_residuals": 99998
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 2,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 15.790201629720062,
+      "p_value": 3.634164383861469e-56,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 3,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 18.854404388206458,
+      "p_value": 2.7036657014390527e-79,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 4,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 21.460065013422525,
+      "p_value": 3.677890846626802e-102,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 5,
+      "epsilon_mult": 0.5,
+      "bds_statistic": 24.449251745090237,
+      "p_value": 5.125458102667926e-132,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 2,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 15.69097655629577,
+      "p_value": 1.743525343625919e-55,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 3,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 18.731817964020514,
+      "p_value": 2.7245145511352363e-78,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 4,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 20.062873769252214,
+      "p_value": 1.5581353864243081e-89,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 5,
+      "epsilon_mult": 1.0,
+      "bds_statistic": 21.33817769662164,
+      "p_value": 5.021391805120552e-101,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 2,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 22.745709651766013,
+      "p_value": 1.5824199921404182e-114,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 3,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 25.39093493962775,
+      "p_value": 3.175820230816356e-142,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 4,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 26.325119344334766,
+      "p_value": 9.892849558191427e-153,
+      "n_residuals": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "m": 5,
+      "epsilon_mult": 1.5,
+      "bds_statistic": 26.747330662374022,
+      "p_value": 1.3262983366732147e-157,
+      "n_residuals": 91857
+    }
+  ],
+  "tail_event_prediction": [
+    {
+      "ticker": "PRES-2024-DJT",
+      "auc": 0.6167243687529613,
+      "precision": 0.009366847310202053,
+      "recall": 0.5103471902566387,
+      "top_5_features": [
+        {
+          "name": "price_level",
+          "importance": 0.49150317907333374
+        },
+        {
+          "name": "taker_side",
+          "importance": 0.2740953266620636
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.16493624448776245
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.05431782081723213
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.015147482976317406
+        }
+      ],
+      "n_samples": 287494,
+      "error": null
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "auc": 0.4067720483111206,
+      "precision": 0.021390022430758653,
+      "recall": 0.4147045650460001,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.393877238035202
+        },
+        {
+          "name": "price_level",
+          "importance": 0.3338353931903839
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.16669878363609314
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.09208984673023224
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.013498693704605103
+        }
+      ],
+      "n_samples": 213961,
+      "error": null
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "auc": 0.4749234463070117,
+      "precision": 0.03225711962075982,
+      "recall": 0.512764232148481,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.3860679566860199
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.1986808478832245
+        },
+        {
+          "name": "price_level",
+          "importance": 0.15573740005493164
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.1537550985813141
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.10575871914625168
+        }
+      ],
+      "n_samples": 149605,
+      "error": null
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "auc": 0.647129609849801,
+      "precision": 0.09149541120548271,
+      "recall": 0.5409438696574983,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.8418970704078674
+        },
+        {
+          "name": "price_level",
+          "importance": 0.05428513139486313
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.04800537973642349
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.04536173492670059
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.010450655594468117
+        }
+      ],
+      "n_samples": 103818,
+      "error": null
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "auc": 0.5228867904304579,
+      "precision": 0.08010118788306012,
+      "recall": 0.5042685452223931,
+      "top_5_features": [
+        {
+          "name": "hour_of_day",
+          "importance": 0.5895511507987976
+        },
+        {
+          "name": "taker_side",
+          "importance": 0.23717299103736877
+        },
+        {
+          "name": "price_level",
+          "importance": 0.08745885640382767
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.05111641809344292
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.03470055013895035
+        }
+      ],
+      "n_samples": 91859,
+      "error": null
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "auc": 0.5374038230338734,
+      "precision": 0.1654418622690513,
+      "recall": 0.5480877630589123,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.41791561245918274
+        },
+        {
+          "name": "price_level",
+          "importance": 0.3050649166107178
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.16586211323738098
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.09010347723960876
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.021053873002529144
+        }
+      ],
+      "n_samples": 87729,
+      "error": null
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "auc": 0.5355232724962042,
+      "precision": 0.027585838260480174,
+      "recall": 0.5093714751221957,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.2711130976676941
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.2343037873506546
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.19116848707199097
+        },
+        {
+          "name": "price_level",
+          "importance": 0.18549396097660065
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.11792074143886566
+        }
+      ],
+      "n_samples": 87246,
+      "error": null
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "auc": 0.5517704252649989,
+      "precision": 0.06480815187512537,
+      "recall": 0.51934507274262,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.3845476508140564
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.3223925232887268
+        },
+        {
+          "name": "price_level",
+          "importance": 0.14699654281139374
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.0843060314655304
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.06175711378455162
+        }
+      ],
+      "n_samples": 81846,
+      "error": null
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "auc": 0.47206889602807145,
+      "precision": 0.05563243211717296,
+      "recall": 0.47587550303964377,
+      "top_5_features": [
+        {
+          "name": "hour_of_day",
+          "importance": 0.6106321811676025
+        },
+        {
+          "name": "price_level",
+          "importance": 0.17768354713916779
+        },
+        {
+          "name": "taker_side",
+          "importance": 0.12147743254899979
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.05042073875665665
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.03978610783815384
+        }
+      ],
+      "n_samples": 78836,
+      "error": null
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "auc": 0.6015195009205154,
+      "precision": 0.2657030243850007,
+      "recall": 0.511554029407743,
+      "top_5_features": [
+        {
+          "name": "taker_side",
+          "importance": 0.6692271828651428
+        },
+        {
+          "name": "price_level",
+          "importance": 0.15345777571201324
+        },
+        {
+          "name": "hour_of_day",
+          "importance": 0.09459109604358673
+        },
+        {
+          "name": "time_since_last_log",
+          "importance": 0.06709392368793488
+        },
+        {
+          "name": "quantity_log",
+          "importance": 0.01562991365790367
+        }
+      ],
+      "n_samples": 78116,
+      "error": null
+    }
+  ],
+  "metadata": {
+    "timestamp": "2026-03-29T18:03:27.578967",
+    "n_top_markets": 20,
+    "sampling_note": "Markets sampled down to 500K trades max if larger"
+  }
+}

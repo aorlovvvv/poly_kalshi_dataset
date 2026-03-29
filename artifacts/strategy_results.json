@@ -1,0 +1,37 @@
+{
+  "strategy_name": "baseline-gbm-v1",
+  "sharpe_ratio": -0.1718,
+  "sortino_ratio": -0.2259,
+  "total_return": -12.86648,
+  "max_drawdown": 8.069415,
+  "auc_roc": 0.985,
+  "n_trades": 99992,
+  "n_markets": 4,
+  "win_rate": 0.156,
+  "avg_pnl_per_trade": -0.00012868,
+  "feature_importances": {
+    "price": 0.018999,
+    "trade_size": 0.002003,
+    "taker_buy": 0.000235,
+    "ret": 0.737985,
+    "lag_ret_1": 0.000958,
+    "lag_ret_2": 0.0,
+    "lag_size_1": 0.001381,
+    "lag_taker_1": 0.000107,
+    "buy_imbalance_20": 0.000108,
+    "rolling_vol_10": 0.000732,
+    "rolling_vol_50": 0.034905,
+    "hour_of_day": 0.081664,
+    "day_of_week": 0.014495,
+    "price_boundary_dist": 0.106426
+  },
+  "metadata": {
+    "elapsed_seconds": 70.6,
+    "train_rows": 399968,
+    "test_rows": 99992,
+    "transaction_cost_bps": 20,
+    "positive_rate_train": 0.08795203616289303,
+    "positive_rate_test": 0.059934794783582684,
+    "mean_position": 0.9627638334006812
+  }
+}
