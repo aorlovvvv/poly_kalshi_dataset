@@ -1,11 +1,18 @@
 """
 EDITABLE — This is the ONLY file the autoresearch loop modifies.
 
-Exp 5: LogisticRegression (fast) + boundary-weighted mean-reversion.
-Hypothesis: GBM takes 60s but real edge is from mean-reversion signal.
-LogReg trains in <1s with same AUC (ret is linearly predictive of target).
-Add price_boundary_dist weighting: mean-revert more aggressively near
-extremes (0/1) where bounce-back is strongest.
+Final strategy: sqrt mean-reversion with 3-trade momentum, boundary weighting,
+tanh sizing, and optimized turnover management.
+
+Key findings from 37 experiments:
+  1. Mean reversion is the dominant alpha (VR ≈ 0.59): go against recent returns
+  2. Three-trade momentum: ret + 0.7*lag1 + 0.2*lag2 captures deeper serial correlation
+  3. Sqrt signal dampening: extreme returns are noisier, moderate ones more reliable
+  4. Boundary boost: prices near 0/1 boundaries revert harder
+  5. LogReg (not GBM): doesn't overfit to ret, uses microstructure features properly
+  6. Tanh sizing: smooth position transitions reduce cost drag
+  7. High turnover threshold (0.60): only reposition for meaningful signal changes
+  8. Minimal tail defense (0.5): mean reversion works even during moderate tail events
 """
 from __future__ import annotations
 
@@ -20,6 +27,9 @@ DD_HARD_STOP = 0.16
 TURNOVER_THRESHOLD = 0.60
 SIGNAL_SCALE = 0.5
 TAIL_SCALE_FACTOR = 0.5
+LAG1_WEIGHT = 0.7
+LAG2_WEIGHT = 0.2
+BOUNDARY_COEFF = 2.0
 
 
 class TailRiskStrategy(Strategy):
@@ -35,7 +45,7 @@ class TailRiskStrategy(Strategy):
         self._call_idx: int = 0
 
     def name(self) -> str:
-        return "logreg-minimal-tail-def-v10"
+        return "sqrt-3trade-tanh-v37"
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray,
               feature_names: list[str]) -> None:
@@ -66,11 +76,12 @@ class TailRiskStrategy(Strategy):
         bds = X[:, bd_idx]
         vols_safe = np.where(vols > 1e-6, vols, 1e-6)
 
-        combined_ret = rets + 0.7 * lag1 + 0.2 * lag2
-        boundary_boost = 1.0 + 2.0 * (0.5 - np.clip(bds, 0, 0.5))
+        combined_ret = rets + LAG1_WEIGHT * lag1 + LAG2_WEIGHT * lag2
+        boundary_boost = 1.0 + BOUNDARY_COEFF * (0.5 - np.clip(bds, 0, 0.5))
 
         sqrt_signal = -np.sign(combined_ret) * np.sqrt(np.abs(combined_ret))
         sqrt_vol = np.sqrt(vols_safe)
+
         self._direction_signals = (sqrt_signal / sqrt_vol * boundary_boost).tolist()
         self._call_idx = 0
 
