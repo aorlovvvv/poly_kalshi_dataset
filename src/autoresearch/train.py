@@ -46,7 +46,7 @@ BOUNDARY_COEFF = 2.0        # boost for prices near 0/1 boundaries
 
 # Model
 MODEL_C = 0.01              # LogisticRegression regularization
-MODEL_MAX_ITER = 500
+MODEL_MAX_ITER = 200
 
 # ---------------------------------------------------------------------------
 # Strategy
