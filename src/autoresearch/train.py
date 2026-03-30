@@ -80,7 +80,7 @@ class TailRiskStrategy(Strategy):
 
         if self._direction_target is not None:
             n = len(X_train)
-            half = n // 2
+            half = 3 * n // 4
             X_dir = self.dir_scaler.fit_transform(X_train[half:])
             self.dir_model.fit(X_dir, self._direction_target[half:])
 
