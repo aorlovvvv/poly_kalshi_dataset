@@ -37,7 +37,7 @@ DD_SOFT_START = 0.08        # start reducing position above this drawdown
 DD_HARD_STOP = 0.16         # zero position above this drawdown
 TURNOVER_THRESHOLD = 0.60   # ignore position changes smaller than this
 SIGNAL_SCALE = 0.5          # multiplier on raw signal before tanh
-TAIL_SCALE_FACTOR = 0.5     # how much to reduce position for tail events
+TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
 
 # Signal construction
 LAG1_WEIGHT = 0.7           # weight on lag_ret_1 in combined momentum
