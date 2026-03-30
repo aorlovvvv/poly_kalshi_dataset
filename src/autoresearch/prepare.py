@@ -44,7 +44,7 @@ from sklearn.metrics import roc_auc_score
 TRANSACTION_COST_PER_CONTRACT = 0.07   # 7 cents per contract (Kalshi taker fee)
 ANNUALIZATION_FACTOR = np.sqrt(252)
 
-MAX_MARKETS = 20
+MAX_MARKETS = 50
 MAX_TRADES_PER_MARKET = 50_000
 MAX_TRADES_TOTAL = 500_000
 TAIL_THRESHOLD_SIGMA = 2.0

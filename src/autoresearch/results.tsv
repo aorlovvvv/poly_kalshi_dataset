@@ -100,3 +100,4 @@ c6c339c	3.628441	0.8146	discard	balanced class weights for dir model
 8df4fd0	3.633274	0.8146	discard	scale dir signal 5x
 9d49fcd	3.618591	0.8147	discard	balanced class weights for tail model
 f7e0818	3.476468	0.8146	discard	adaptive blend (worse)
+73dce0d	-14.752707	0.8161	keep	validation: 50 markets, 7c costs, market-boundary resets (honest baseline)
