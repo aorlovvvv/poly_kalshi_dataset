@@ -89,7 +89,7 @@ class TailRiskStrategy(Strategy):
             dd_scale = (DD_HARD_STOP - state.drawdown) / (DD_HARD_STOP - DD_SOFT_START)
 
         tail_scale = max(0.0, 1.0 - TAIL_SCALE_FACTOR * tail_prob)
-        desired = float(np.clip(raw_signal * SIGNAL_SCALE * tail_scale * dd_scale, -1.0, 1.0))
+        desired = float(np.tanh(raw_signal * SIGNAL_SCALE * tail_scale * dd_scale))
 
         if abs(desired - state.position) < TURNOVER_THRESHOLD:
             return state.position
