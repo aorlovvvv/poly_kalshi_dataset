@@ -146,7 +146,10 @@ class TailRiskStrategy(Strategy):
         tail_scale = max(0.0, 1.0 - TAIL_SCALE_FACTOR * tail_prob)
         desired = float(np.tanh(raw_signal * SIGNAL_SCALE * tail_scale * dd_scale))
 
-        if abs(desired - state.position) < TURNOVER_THRESHOLD:
+        delta = abs(desired - state.position)
+        is_entry = abs(state.position) < 0.05
+        threshold = 0.60 if is_entry else TURNOVER_THRESHOLD
+        if delta < threshold:
             return state.position
 
         return desired
