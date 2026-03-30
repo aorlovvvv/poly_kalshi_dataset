@@ -1,0 +1,16 @@
+langgraph
+langchain
+langchain-anthropic
+python-dotenv
+pydantic
+rich
+typer
+duckdb
+pandas
+polars
+pyarrow
+numpy
+statsmodels
+scikit-learn
+matplotlib
+pyyaml

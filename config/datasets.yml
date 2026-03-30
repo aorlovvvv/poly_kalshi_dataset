@@ -1,0 +1,20 @@
+datasets:
+  polymarket_trades:
+    platform: polymarket
+    kind: trades
+    glob: "data/raw/polymarket/trades/*.parquet"
+
+  polymarket_blocks:
+    platform: polymarket
+    kind: blocks
+    glob: "data/raw/polymarket/blocks/*.parquet"
+
+  kalshi_trades:
+    platform: kalshi
+    kind: trades
+    glob: "data/raw/kalshi/trades/*.parquet"
+
+  kalshi_markets:
+    platform: kalshi
+    kind: markets
+    glob: "data/raw/kalshi/markets/*.parquet"

@@ -1,0 +1,27 @@
+datasets:
+  kalshi_trades:
+    table: kalshi_trades
+    timestamp: created_time
+    market_id: ticker
+    price: yes_price       # cents 0-99; divided by 100 in analysis
+    quantity: count         # number of contracts
+
+  polymarket_trades:
+    table: polymarket_trades
+    timestamp: null         # ALL NULL; joined to blocks via block_number
+    market_id: null         # derived: non-'0' asset_id
+    price: null             # derived: maker_amount/taker_amount or inverse
+    quantity: taker_amount  # outcome token amount (or maker_amount for sells)
+
+analysis:
+  tasks:
+    - trade_summary
+    - price_distribution
+    - volume_by_day
+    - trade_size_distribution
+    - hourly_pattern
+    - price_concentration
+    - taker_side_analysis
+
+paper:
+  research_question: "How do Polymarket and Kalshi differ in price distributions, trading volume dynamics, trade size characteristics, and intraday patterns?"

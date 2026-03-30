@@ -1,0 +1,26 @@
+# data
+data/raw/
+data/processed/
+
+# artifacts (force-add key .md and .json files)
+artifacts/
+paper/*.pdf
+paper/tables/
+paper/figures/
+paper/results.tex
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# IDE
+.cursor/
+
+# task prompts (ephemeral)
+cursor_prompts/
+
+# autoresearch experiment artifacts (untracked by design)
+src/autoresearch/results.tsv
+src/autoresearch/run.log

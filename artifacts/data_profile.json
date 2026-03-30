@@ -1,0 +1,210 @@
+{
+  "row_counts": {
+    "kalshi_trades": 72134741,
+    "kalshi_markets": 7682445,
+    "polymarket_trades": 404540000,
+    "polymarket_blocks": 78468431
+  },
+  "kalshi_price_distribution": {
+    "min": 0.0,
+    "max": 99.0,
+    "mean": 44.00762327544782,
+    "median": 43.0,
+    "std": 27.790856836398792,
+    "p01": 1.0,
+    "p05": 3.0,
+    "p25": 20.0,
+    "p75": 65.0,
+    "p95": 93.0,
+    "p99": 99.0
+  },
+  "kalshi_date_range": {
+    "earliest": "2021-06-30 21:09:14.185137+01:00",
+    "latest": "2025-11-25 22:00:15.194245+00:00"
+  },
+  "kalshi_distinct_markets": 586025,
+  "kalshi_taker_side": {
+    "no": 22440617,
+    "yes": 49694124
+  },
+  "kalshi_trade_size": {
+    "min": 1.0,
+    "max": 3127823.0,
+    "mean": 253.20494430000102,
+    "median": 40.0,
+    "std": 1760.7137244135774,
+    "p95": 974.0,
+    "p99": 3892.0,
+    "mean_median_ratio": 6.330123607500026
+  },
+  "polymarket_sample_columns": [
+    "block_number",
+    "transaction_hash",
+    "log_index",
+    "order_hash",
+    "maker",
+    "taker",
+    "maker_asset_id",
+    "taker_asset_id",
+    "maker_amount",
+    "taker_amount",
+    "fee",
+    "timestamp",
+    "_fetched_at",
+    "_contract"
+  ],
+  "polymarket_date_range": {
+    "earliest": "2023-03-05 17:06:59",
+    "latest": "2026-01-25 17:26:06"
+  },
+  "polymarket_buy_sell": {
+    "buy": 299609911,
+    "sell": 104930089
+  },
+  "polymarket_price_distribution": {
+    "min": 0.001,
+    "max": 0.9990008991907283,
+    "mean": 0.49827032273237676,
+    "median": 0.5,
+    "std": 0.3381477556454363,
+    "p01": 0.001,
+    "p05": 0.0037930691258904153,
+    "p25": 0.19352480139388925,
+    "p75": 0.8013844530779884,
+    "p95": 0.9955426206475594,
+    "p99": 0.999
+  },
+  "kalshi_hourly": {
+    "0": 4875103,
+    "1": 5345449,
+    "2": 5452551,
+    "3": 5456222,
+    "4": 4118561,
+    "5": 2416963,
+    "6": 1293234,
+    "7": 793700,
+    "8": 283903,
+    "9": 227949,
+    "10": 236577,
+    "11": 273072,
+    "12": 522007,
+    "13": 1961364,
+    "14": 2642206,
+    "15": 3207527,
+    "16": 3442828,
+    "17": 3903600,
+    "18": 4201545,
+    "19": 4389003,
+    "20": 5003693,
+    "21": 4467855,
+    "22": 3664421,
+    "23": 3955408
+  },
+  "polymarket_hourly": {
+    "0": 15198346,
+    "1": 16181181,
+    "2": 17034831,
+    "3": 16518062,
+    "4": 15053191,
+    "5": 15273473,
+    "6": 15841095,
+    "7": 16500055,
+    "8": 17001236,
+    "9": 16988669,
+    "10": 16488576,
+    "11": 16798943,
+    "12": 17855453,
+    "13": 19000884,
+    "14": 19807365,
+    "15": 19589079,
+    "16": 19229659,
+    "17": 17948682,
+    "18": 17139047,
+    "19": 17077997,
+    "20": 16906396,
+    "21": 15992888,
+    "22": 14662784,
+    "23": 14452108
+  },
+  "kalshi_market_thresholds": {
+    "total": 586025,
+    "gte_100": 77618,
+    "gte_1000": 9865,
+    "gte_10000": 1105,
+    "gte_100000": 4
+  },
+  "extreme_price_fractions": {
+    "kalshi_frac_extreme_5pct": 0.1195405414985825,
+    "kalshi_frac_extreme_10pct": 0.21438047445127723,
+    "kalshi_frac_tossup": 0.2176370883483175,
+    "kalshi_frac_uncertain": 0.5174347683593956,
+    "polymarket_frac_extreme_5pct": 0.3169718,
+    "polymarket_frac_extreme_10pct": 0.3913406,
+    "polymarket_frac_tossup": 0.2012832,
+    "polymarket_frac_uncertain": 0.427951
+  },
+  "kalshi_serial_correlation": [
+    {
+      "ticker": "PRES-2024-DJT",
+      "lag1_autocorr": -0.4748129507242192,
+      "n_changes": 287492
+    },
+    {
+      "ticker": "PRES-2024-KH",
+      "lag1_autocorr": -0.4458356152889056,
+      "n_changes": 213959
+    },
+    {
+      "ticker": "KXMLB-25-LAD",
+      "lag1_autocorr": -0.3407399846292989,
+      "n_changes": 149603
+    },
+    {
+      "ticker": "KXNBA-25-IND",
+      "lag1_autocorr": -0.43526587231015534,
+      "n_changes": 103816
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-SF",
+      "lag1_autocorr": -0.3721600895757545,
+      "n_changes": 91857
+    },
+    {
+      "ticker": "KXNFLGAME-25SEP28GBDAL-DAL",
+      "lag1_autocorr": -0.4032041696836575,
+      "n_changes": 87727
+    },
+    {
+      "ticker": "KXMLB-25-TOR",
+      "lag1_autocorr": -0.3539942454879917,
+      "n_changes": 87244
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-JAC",
+      "lag1_autocorr": -0.36599774958907316,
+      "n_changes": 81844
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT02SFLA-LA",
+      "lag1_autocorr": -0.38017439652340146,
+      "n_changes": 78834
+    },
+    {
+      "ticker": "KXNFLGAME-25OCT06KCJAC-KC",
+      "lag1_autocorr": -0.36463731263464816,
+      "n_changes": 78114
+    }
+  ],
+  "kalshi_price_jumps": {
+    "n": 5597391.0,
+    "mean_ret": -9.29004245013433e-07,
+    "std_ret": 0.01020644126656823,
+    "p01": -0.02209733073299253,
+    "p05": -0.010001608611008484,
+    "p95": 0.010000000000000009,
+    "p99": 0.022727688915905722,
+    "frac_large_jumps": 0.0008561131427123816,
+    "kurtosis": 393.33498993953185,
+    "skewness": 0.26143116385857507
+  }
+}

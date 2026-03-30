@@ -1,0 +1,102 @@
+commit	sharpe_ratio	auc_roc	status	description
+4d2d303	2.962407	0.7811	keep	baseline
+a7d4bdb	2.951944	0.7811	discard	boundary_coeff 2.0 -> 3.0
+9e91d98	2.906834	0.7811	discard	turnover 0.60 -> 0.45
+30ae17c	2.970116	0.7811	keep	tail_scale 0.5 -> 0.3 (less defensive)
+9642e9c	2.951408	0.7811	discard	tail_scale 0.3 -> 0.1 (too aggressive)
+2d3f6e5	2.934578	0.7811	discard	signal_scale 0.5 -> 0.6
+6f936a8	2.872309	0.7811	discard	add order-flow imbalance boost (hurts)
+84bac9a	2.869834	0.7811	discard	lag weights 0.7/0.2 -> 0.5/0.4
+a5e3ace	2.968379	0.7811	discard	normalize by vol_10 instead of vol_50
+7d0a2d6	2.914525	0.7811	discard	disable tail defense (tail_scale=0)
+19eeece	2.936814	0.9756	discard	RandomForest (AUC 0.976 but Sharpe worse)
+d3f1e44	2.867800	0.7811	discard	invert tail logic (boost during tails)
+c6737ea	2.867756	0.7811	discard	linear signal (remove sqrt dampening)
+a8cf671	2.939755	0.7811	discard	vol regime signal (vol50/vol10 ratio)
+1f0e711	2.970089	0.7811	discard	tight DD protection 0.014/0.022
+251d0ff	2.964838	0.7811	discard	tail_scale 0.3 -> 0.25
+23333b5	2.970259	0.7811	keep	model_C 1.0 -> 0.1 (stronger regularization)
+f0d52e4	2.970939	0.7813	keep	model_C 0.1 -> 0.01
+8930b9a	2.969918	0.7829	discard	model_C 0.01 -> 0.001 (overshot)
+5ab7c2a	2.957477	0.7813	discard	signal_scale 0.5 -> 0.45
+2315ed4	2.954158	0.7813	discard	1pct position decay on stale signals
+55e5000	2.967117	0.7813	discard	boundary_coeff 2.0 -> 1.0
+90adfb7	2.685105	0.7813	discard	trade size boost on signal
+e1e8a04	3.001825	0.7813	keep	turnover 0.60 -> 0.70 (BROKE 3.0!)
+e481865	2.953090	0.7813	discard	turnover 0.70 -> 0.80 (overshot)
+1f3cd79	2.975089	0.7813	discard	turnover 0.70 -> 0.75
+b15d866	3.001825	0.7813	keep	max_iter 500 -> 200 (same result simpler)
+1552127	3.138153	0.7813	keep	ML direction model blend (30pct) HUGE WIN
+6e10ce7	3.104490	0.7813	discard	dir_blend 0.3 -> 0.4
+a740bf9	3.163855	0.7813	keep	dir_blend 0.3 -> 0.2
+6f0c95a	3.140946	0.7813	discard	dir_blend 0.2 -> 0.1
+fc72dfc	3.159131	0.7813	discard	dir_blend 0.2 -> 0.15
+07322f9	3.163851	0.7813	discard	dir_model_C 0.1 -> 0.01 (identical)
+09456c0	3.230690	0.7813	keep	signal_scale 0.5 -> 0.55 (NEW RECORD)
+75e78cd	3.286438	0.7813	keep	signal_scale 0.55 -> 0.60 (NEW RECORD)
+b5f1db7	3.302045	0.7813	keep	signal_scale 0.60 -> 0.65
+f61578a	3.321818	0.7813	keep	signal_scale 0.65 -> 0.70
+0a4be27	3.321397	0.7813	discard	signal_scale 0.70 -> 0.80
+3c04f63	3.318921	0.7813	discard	signal_scale 0.70 -> 0.75
+30244c9	3.122978	0.7813	discard	Ridge regression for direction (worse)
+b9b584b	3.262667	0.7813	discard	turnover 0.70 -> 0.65
+d171eef	3.323425	0.7813	keep	turnover 0.70 -> 0.75
+94c89e5	3.315301	0.7813	discard	turnover 0.75 -> 0.80
+9fb0c1f	3.308736	0.7813	discard	polynomial interactions for dir model (overfit)
+8f07df4	3.282023	0.7813	discard	sqrt boundary boost ramp
+e6d0708	3.175315	0.7813	discard	clip sizing instead of tanh
+1786bdf	2.870234	0.7813	discard	multiplicative gate (too aggressive)
+88ed335	3.192151	0.7813	discard	6-feature direction model
+d81fb57	3.319409	0.7813	discard	4x direction signal scaling
+807de4f	3.310935	0.7813	discard	threshold tail defense (step function)
+983ff44	3.310484	0.7813	discard	logit direction signal mapping
+46b125b	3.344106	0.7813	keep	asymmetric turnover (0.60 entry 0.75 repos)
+261268b	3.347316	0.7813	keep	entry threshold 0.60 -> 0.50
+d191e7b	3.351741	0.7813	keep	entry threshold 0.50 -> 0.40
+a59337a	3.355314	0.7813	keep	entry threshold 0.40 -> 0.30
+9dddb6a	3.356139	0.7813	keep	entry threshold 0.30 -> 0.20
+ac20e46	3.351961	0.7813	discard	entry threshold 0.20 -> 0.10 (overshot)
+9d4eebc	3.350636	0.7813	discard	entry detection 0.05 -> 0.10
+4cef450	3.320487	0.7813	discard	3-tier turnover entry/exit/repos
+a21c5f0	3.337587	0.7813	discard	tail_scale 0.3 -> 0.2 (re-sweep)
+a70e822	3.355394	0.7813	discard	L1 regularization for dir model
+2465937	3.356139	0.7813	keep	remove unused DD protection (simplification)
+c0b48c4	3.293152	0.7813	discard	disable tail defense with dir model
+5603ebd	3.147485	0.7813	discard	drop lag2 from signal
+50780d8	3.308103	0.7813	discard	RandomForest for direction model
+4174c6d	3.358962	0.7813	keep	train dir model on recent 50pct only
+f90242f	3.359511	0.7813	keep	train dir model on last 25pct only
+7f0e11b	3.360250	0.7813	keep	dir model on last 10pct training data
+f9cc002	3.311983	0.7813	discard	dir model last 5pct (underfits)
+0696d5a	3.390393	0.8146	keep	both models on last 10pct (AUC jump!)
+4779ef7	3.326637	0.6521	discard	both models last 15pct (AUC dropped)
+f4ac72d	3.355728	0.7398	discard	both models last 7pct
+9171599	3.397787	0.8146	keep	split windows 10pct tail 20pct direction
+c87b1cb	3.380700	0.8146	discard	10pct tail + 30pct direction
+f6261dd	3.343268	0.6531	discard	5pct tail + 20pct dir (too little for tail)
+f92d64f	3.279687	0.8146	discard	invert tail (still bad with dir model)
+565ab23	3.333204	0.8146	discard	dir_blend 0.2 -> 0.15 re-sweep
+1f25830	3.431916	0.8146	keep	dir_blend 0.2 -> 0.25 (HUGE WIN with recency)
+f42f876	3.480857	0.8146	keep	dir_blend 0.25 -> 0.30
+7e0fc02	3.492320	0.8146	keep	dir_blend 0.30 -> 0.35
+16afbc6	3.501591	0.8146	keep	dir_blend 0.35 -> 0.40 (BROKE 3.5!)
+e72f19f	3.463540	0.8146	discard	dir_blend 0.40 -> 0.50 (overshot)
+1eaab61	3.503037	0.8146	keep	dir_blend 0.40 -> 0.45
+9cf22e9	3.538505	0.8146	keep	signal_scale 0.70 -> 0.75 (re-sweep NEW RECORD)
+9400fb7	3.560214	0.8146	keep	signal_scale 0.75 -> 0.80
+d754190	3.600380	0.8146	keep	signal_scale 0.80 -> 0.90 (BROKE 3.6!)
+8aa3174	3.617633	0.8146	keep	signal_scale 0.90 -> 1.00
+410310f	3.639662	0.8146	keep	signal_scale 1.00 -> 1.20
+b6afa8e	3.655813	0.8146	keep	signal_scale 1.20 -> 1.50
+6f2be64	3.625107	0.8146	discard	signal_scale 1.50 -> 2.00 (overshot)
+237211f	3.646131	0.8146	discard	signal_scale 1.50 -> 1.70
+43add14	3.633245	0.8146	discard	turnover 0.75 -> 0.80 (re-sweep)
+74c134d	3.657111	0.8146	keep	entry threshold 0.20 -> 0.30
+aa16920	3.657633	0.8146	keep	entry threshold 0.30 -> 0.40
+fe2e577	3.657930	0.8146	keep	entry threshold 0.40 -> 0.50
+64dea04	3.659580	0.8146	keep	entry 0.50 -> 0.60
+eaf8084	3.659400	0.8146	keep	remove asymmetric turnover (simplification)
+c6c339c	3.628441	0.8146	discard	balanced class weights for dir model
+8df4fd0	3.633274	0.8146	discard	scale dir signal 5x
+9d49fcd	3.618591	0.8147	discard	balanced class weights for tail model
+f7e0818	3.476468	0.8146	discard	adaptive blend (worse)

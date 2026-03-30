@@ -1,0 +1,13 @@
+datasets_config: "config/datasets.yml"
+
+run:
+  seed: 42
+
+analysis:
+  max_rows_per_dataset: 2000000
+  min_ts: null
+  max_ts: null
+
+paper:
+  title: "Polymarket vs Kalshi: A Comparative Microstructure Study"
+  authors: "Andrey Orlov"

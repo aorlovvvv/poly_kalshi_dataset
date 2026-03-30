@@ -4,6 +4,7 @@ This is the ONLY file the agent modifies.
 
 Usage: python train.py
        python train.py > run.log 2>&1
+       python train.py --strategy ppo  # Use PPO agent instead of LogReg
 
 Current strategy: sqrt mean-reversion with 3-trade momentum, boundary
 weighting, tanh sizing, and optimized turnover management.
@@ -17,6 +18,10 @@ Key findings from 37 experiments:
   6. Tanh sizing: smooth position transitions reduce cost drag
   7. High turnover threshold (0.60): only reposition for meaningful signal changes
   8. Minimal tail defense (0.5): mean reversion works even during moderate tail events
+
+Alternative strategies (selectable via --strategy flag):
+  - "logreg" (default): Logistic regression with hand-crafted signals
+  - "ppo": PPO reinforcement learning agent (requires torch)
 """
 
 import time
@@ -150,8 +155,36 @@ class TailRiskStrategy(Strategy):
 
 
 # ---------------------------------------------------------------------------
+# Strategy selection
+# ---------------------------------------------------------------------------
+
+def create_strategy(strategy_type: str = "logreg", train_df=None) -> Strategy:
+    """Create strategy by type. Default is LogReg (current winner)."""
+    if strategy_type == "ppo":
+        try:
+            from rl_agent import PPOStrategy
+            return PPOStrategy(hidden_dim=64, n_episodes=50, reward_shaping="sharpe")
+        except ImportError:
+            print("WARNING: torch not available, falling back to LogReg")
+            strategy_type = "logreg"
+
+    # Default: LogReg
+    s = TailRiskStrategy()
+    if train_df is not None:
+        s._direction_target = (train_df["next_ret"] > 0).astype(int).values
+    return s
+
+
+# ---------------------------------------------------------------------------
 # Run
 # ---------------------------------------------------------------------------
+
+import sys
+strategy_type = "logreg"
+if "--strategy" in sys.argv:
+    idx = sys.argv.index("--strategy")
+    if idx + 1 < len(sys.argv):
+        strategy_type = sys.argv[idx + 1]
 
 t_start = time.time()
 
@@ -164,8 +197,7 @@ y_test = test_df["target"].values.astype(np.int32)
 next_rets = test_df["next_ret"].values.astype(np.float64)
 
 # Train
-strategy = TailRiskStrategy()
-strategy._direction_target = (train_df["next_ret"] > 0).astype(int).values
+strategy = create_strategy(strategy_type, train_df)
 print(f"Strategy: {strategy.name()}")
 strategy.train(X_train, y_train, feature_names)
 
@@ -180,16 +212,18 @@ t_end = time.time()
 
 print()
 print("---")
-print(f"sharpe_ratio:     {results['sharpe_ratio']:.6f}")
-print(f"sortino_ratio:    {results['sortino_ratio']:.6f}")
-print(f"total_return:     {results['total_return']:.6f}")
-print(f"max_drawdown:     {results['max_drawdown']:.6f}")
-print(f"auc_roc:          {results['auc_roc']:.4f}")
-print(f"win_rate:         {results['win_rate']:.4f}")
-print(f"n_trades:         {results['n_trades']}")
-print(f"n_markets:        {results['n_markets']}")
-print(f"mean_position:    {results['mean_position']:.4f}")
-print(f"elapsed_seconds:  {t_end - t_start:.1f}")
+print(f"sharpe_ratio:          {results['sharpe_ratio']:.6f}")
+print(f"sortino_ratio:         {results['sortino_ratio']:.6f}")
+print(f"avg_per_market_sharpe: {results.get('avg_per_market_sharpe', 'N/A')}")
+print(f"total_return:          {results['total_return']:.6f}")
+print(f"max_drawdown:          {results['max_drawdown']:.6f}")
+print(f"win_rate:              {results['win_rate']:.4f}")
+print(f"n_trades:              {results['n_trades']}")
+print(f"n_days:                {results.get('n_days', 'N/A')}")
+print(f"n_markets:             {results['n_markets']}")
+print(f"mean_position:         {results['mean_position']:.4f}")
+print(f"auc_roc_IGNORE:        {results.get('auc_roc_IGNORE', 'N/A')}  # meaningless — ret leaks into target")
+print(f"elapsed_seconds:       {t_end - t_start:.1f}")
 
 print()
 print("Top features:")
