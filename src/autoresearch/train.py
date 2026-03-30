@@ -34,7 +34,7 @@ from prepare import (Strategy, PortfolioState, load_data, evaluate,
 
 # Position sizing / risk
 TURNOVER_THRESHOLD = 0.75   # ignore position changes smaller than this
-SIGNAL_SCALE = 0.75         # multiplier on raw signal before tanh
+SIGNAL_SCALE = 0.80         # multiplier on raw signal before tanh
 TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
 
 # Signal construction
