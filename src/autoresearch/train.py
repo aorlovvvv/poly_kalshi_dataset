@@ -79,8 +79,10 @@ class TailRiskStrategy(Strategy):
         self.model.fit(X_scaled, y_train)
 
         if self._direction_target is not None:
-            X_dir = self.dir_scaler.fit_transform(X_train)
-            self.dir_model.fit(X_dir, self._direction_target)
+            n = len(X_train)
+            half = n // 2
+            X_dir = self.dir_scaler.fit_transform(X_train[half:])
+            self.dir_model.fit(X_dir, self._direction_target[half:])
 
         coefs = np.abs(self.model.coef_[0])
         total = coefs.sum()
