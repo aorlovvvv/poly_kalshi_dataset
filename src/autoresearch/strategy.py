@@ -54,17 +54,19 @@ class TailRiskStrategy(Strategy):
         probs = self.model.predict_proba(X_scaled)[:, 1]
 
         ret_idx = self._feature_names.index("ret")
-        lag_idx = self._feature_names.index("lag_ret_1")
+        lag1_idx = self._feature_names.index("lag_ret_1")
+        lag2_idx = self._feature_names.index("lag_ret_2")
         vol_idx = self._feature_names.index("rolling_vol_50")
         bd_idx = self._feature_names.index("price_boundary_dist")
 
         rets = X[:, ret_idx]
-        lag_rets = X[:, lag_idx]
+        lag1 = np.nan_to_num(X[:, lag1_idx], 0.0)
+        lag2 = np.nan_to_num(X[:, lag2_idx], 0.0)
         vols = X[:, vol_idx]
         bds = X[:, bd_idx]
         vols_safe = np.where(vols > 1e-6, vols, 1e-6)
 
-        combined_ret = rets + 0.5 * np.nan_to_num(lag_rets, 0.0)
+        combined_ret = rets + 0.7 * lag1 + 0.2 * lag2
         boundary_boost = 1.0 + 2.0 * (0.5 - np.clip(bds, 0, 0.5))
 
         self._direction_signals = (-combined_ret / vols_safe * boundary_boost).tolist()
