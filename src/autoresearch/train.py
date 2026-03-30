@@ -35,7 +35,7 @@ from prepare import (Strategy, PortfolioState, load_data, evaluate,
 # Position sizing / risk
 DD_SOFT_START = 0.08        # start reducing position above this drawdown
 DD_HARD_STOP = 0.16         # zero position above this drawdown
-TURNOVER_THRESHOLD = 0.70   # ignore position changes smaller than this
+TURNOVER_THRESHOLD = 0.75   # ignore position changes smaller than this
 SIGNAL_SCALE = 0.70         # multiplier on raw signal before tanh
 TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
 
