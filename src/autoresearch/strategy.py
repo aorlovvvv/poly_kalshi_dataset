@@ -1,11 +1,10 @@
 """
 EDITABLE — This is the ONLY file the autoresearch loop modifies.
 
-Exp 1: Mean-reversion sizing with directional signal + turnover filter.
-Hypothesis: VR ≈ 0.59 means strong mean reversion. Going against current
-ret should be profitable, scaled by inverse volatility. Reduce position
-during detected tail events (uncertain direction). Turnover filter to
-cut transaction costs.
+Exp 3: Mean-reversion + SOFT drawdown scaling (linear 8%→16%) + tune signal.
+Hypothesis: Hard DD cutoff kills returns. Instead, linearly reduce position
+as drawdown grows from 8% to 16%. Also increase signal scale from 0.3→0.4
+to capture more of the mean-reversion edge.
 """
 from __future__ import annotations
 
@@ -13,6 +12,12 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 
 from .interfaces import PortfolioState, Strategy
+
+DD_SOFT_START = 0.08
+DD_HARD_STOP = 0.16
+TURNOVER_THRESHOLD = 0.15
+SIGNAL_SCALE = 0.4
+TAIL_SCALE_FACTOR = 2.0
 
 
 class TailRiskStrategy(Strategy):
@@ -29,11 +34,10 @@ class TailRiskStrategy(Strategy):
         self._feature_names: list[str] = []
         self._importances: dict[str, float] = {}
         self._direction_signals: list[float] = []
-        self._vol_signals: list[float] = []
         self._call_idx: int = 0
 
     def name(self) -> str:
-        return "mean-revert-v1"
+        return "mean-revert-soft-dd-v3"
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray,
               feature_names: list[str]) -> None:
@@ -56,7 +60,6 @@ class TailRiskStrategy(Strategy):
         vols_safe = np.where(vols > 1e-6, vols, 1e-6)
 
         self._direction_signals = (-rets / vols_safe).tolist()
-        self._vol_signals = vols.tolist()
         self._call_idx = 0
 
         return probs
@@ -69,11 +72,16 @@ class TailRiskStrategy(Strategy):
         else:
             return 0.0
 
-        tail_scale = max(0.0, 1.0 - 2.0 * tail_prob)
+        dd_scale = 1.0
+        if state.drawdown > DD_HARD_STOP:
+            dd_scale = 0.0
+        elif state.drawdown > DD_SOFT_START:
+            dd_scale = (DD_HARD_STOP - state.drawdown) / (DD_HARD_STOP - DD_SOFT_START)
 
-        desired = float(np.clip(raw_signal * 0.3 * tail_scale, -1.0, 1.0))
+        tail_scale = max(0.0, 1.0 - TAIL_SCALE_FACTOR * tail_prob)
+        desired = float(np.clip(raw_signal * SIGNAL_SCALE * tail_scale * dd_scale, -1.0, 1.0))
 
-        if abs(desired - state.position) < 0.15:
+        if abs(desired - state.position) < TURNOVER_THRESHOLD:
             return state.position
 
         return desired
