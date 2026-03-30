@@ -75,8 +75,10 @@ class TailRiskStrategy(Strategy):
     def train(self, X_train: np.ndarray, y_train: np.ndarray,
               feature_names: list[str]) -> None:
         self._feature_names = list(feature_names)
-        X_scaled = self.scaler.fit_transform(X_train)
-        self.model.fit(X_scaled, y_train)
+        n = len(X_train)
+        recent = 9 * n // 10
+        X_scaled = self.scaler.fit_transform(X_train[recent:])
+        self.model.fit(X_scaled, y_train[recent:])
 
         if self._direction_target is not None:
             n = len(X_train)
