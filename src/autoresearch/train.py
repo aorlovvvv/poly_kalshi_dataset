@@ -41,7 +41,7 @@ TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
 LAG1_WEIGHT = 0.7           # weight on lag_ret_1 in combined momentum
 LAG2_WEIGHT = 0.2           # weight on lag_ret_2 in combined momentum
 BOUNDARY_COEFF = 2.0        # boost for prices near 0/1 boundaries
-DIR_BLEND = 0.35            # weight on ML direction model (vs hand-crafted)
+DIR_BLEND = 0.40            # weight on ML direction model (vs hand-crafted)
 
 # Model
 MODEL_C = 0.01              # LogisticRegression regularization
