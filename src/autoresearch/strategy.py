@@ -69,7 +69,9 @@ class TailRiskStrategy(Strategy):
         combined_ret = rets + 0.7 * lag1 + 0.2 * lag2
         boundary_boost = 1.0 + 2.0 * (0.5 - np.clip(bds, 0, 0.5))
 
-        self._direction_signals = (-combined_ret / vols_safe * boundary_boost).tolist()
+        sqrt_signal = -np.sign(combined_ret) * np.sqrt(np.abs(combined_ret))
+        sqrt_vol = np.sqrt(vols_safe)
+        self._direction_signals = (sqrt_signal / sqrt_vol * boundary_boost).tolist()
         self._call_idx = 0
 
         return probs
