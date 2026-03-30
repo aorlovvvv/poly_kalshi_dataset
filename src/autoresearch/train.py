@@ -81,8 +81,7 @@ class TailRiskStrategy(Strategy):
         self.model.fit(X_scaled, y_train[recent:])
 
         if self._direction_target is not None:
-            n = len(X_train)
-            half = 9 * n // 10
+            half = 4 * n // 5
             X_dir = self.dir_scaler.fit_transform(X_train[half:])
             self.dir_model.fit(X_dir, self._direction_target[half:])
 
