@@ -148,7 +148,7 @@ class TailRiskStrategy(Strategy):
 
         delta = abs(desired - state.position)
         is_entry = abs(state.position) < 0.05
-        threshold = 0.30 if is_entry else TURNOVER_THRESHOLD
+        threshold = 0.20 if is_entry else TURNOVER_THRESHOLD
         if delta < threshold:
             return state.position
 
