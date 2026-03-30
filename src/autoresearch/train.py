@@ -33,8 +33,6 @@ from prepare import (Strategy, PortfolioState, load_data, evaluate,
 # ---------------------------------------------------------------------------
 
 # Position sizing / risk
-DD_SOFT_START = 0.08        # start reducing position above this drawdown
-DD_HARD_STOP = 0.16         # zero position above this drawdown
 TURNOVER_THRESHOLD = 0.75   # ignore position changes smaller than this
 SIGNAL_SCALE = 0.70         # multiplier on raw signal before tanh
 TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
@@ -136,15 +134,8 @@ class TailRiskStrategy(Strategy):
         else:
             return 0.0
 
-        dd_scale = 1.0
-        if state.drawdown > DD_HARD_STOP:
-            dd_scale = 0.0
-        elif state.drawdown > DD_SOFT_START:
-            dd_scale = ((DD_HARD_STOP - state.drawdown)
-                        / (DD_HARD_STOP - DD_SOFT_START))
-
         tail_scale = max(0.0, 1.0 - TAIL_SCALE_FACTOR * tail_prob)
-        desired = float(np.tanh(raw_signal * SIGNAL_SCALE * tail_scale * dd_scale))
+        desired = float(np.tanh(raw_signal * SIGNAL_SCALE * tail_scale))
 
         delta = abs(desired - state.position)
         is_entry = abs(state.position) < 0.05
