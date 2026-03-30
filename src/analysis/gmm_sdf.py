@@ -41,10 +41,13 @@ import warnings
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
+import duckdb
 import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
+KALSHI_GLOB = str(ROOT / "data" / "raw" / "kalshi" / "trades" / "*.parquet")
+KALSHI_MARKETS_GLOB = str(ROOT / "data" / "raw" / "kalshi" / "markets" / "*.parquet")
 
 
 # ---------------------------------------------------------------------------
@@ -365,51 +368,132 @@ def estimate_risk_premia(prices: np.ndarray, outcomes: np.ndarray,
 # Synthetic Data for Proof of Concept
 # ---------------------------------------------------------------------------
 
-def generate_synthetic_market_data(n_markets: int = 20, n_trades_per: int = 500,
-                                    seed: int = 42) -> dict:
-    """
-    Generate synthetic prediction market data for GMM estimation testing.
+def _categorize_kalshi_ticker(ticker: str) -> str:
+    """Heuristic categorization of Kalshi market by ticker."""
+    t = ticker.upper()
+    if any(x in t for x in ["PRES", "SENATE", "HOUSE", "GOV", "PARTY", "ELECT"]):
+        return "political"
+    if any(x in t for x in ["NFL", "NBA", "MLB", "NHL", "NCAA", "WNBA", "GAME"]):
+        return "sports"
+    if any(x in t for x in ["BTC", "ETH", "CRYPTO", "SPX", "NASDAQ", "RATE", "CPI", "GDP", "FED"]):
+        return "economic"
+    return "other"
 
-    In production, this is replaced by actual Kalshi/Polymarket data loaded
-    via DuckDB from raw parquet files.
+
+def load_real_market_data(n_markets: int = 20) -> dict:
     """
-    rng = np.random.RandomState(seed)
+    Load real Kalshi market data for GMM estimation.
+
+    For each resolved market, we have:
+    - prices: trade-level yes_price / 100
+    - payoffs: binary resolution (1 if yes, 0 if no) — from market result
+    - instruments: price level, trade-level volatility, time progression
+    - categories: heuristic classification by ticker
+    """
+    con = duckdb.connect()
+
+    # Load resolved markets with their results
+    print("  Loading resolved Kalshi markets...")
+    resolved = con.execute(f"""
+        SELECT ticker, result, COUNT(*) AS n_trades
+        FROM read_parquet('{KALSHI_GLOB}', union_by_name=true) t
+        JOIN (
+            SELECT ticker AS mkt_ticker, result
+            FROM read_parquet('{KALSHI_MARKETS_GLOB}', union_by_name=true)
+            WHERE result IN ('yes', 'no')
+        ) m ON t.ticker = m.mkt_ticker
+        WHERE t.created_time IS NOT NULL
+          AND t.yes_price >= 1 AND t.yes_price <= 99
+        GROUP BY ticker, result
+        HAVING COUNT(*) >= 200
+        ORDER BY n_trades DESC
+        LIMIT {n_markets}
+    """).fetchall()
+
+    if not resolved:
+        print("  No resolved markets found, falling back to synthetic data")
+        return _generate_synthetic_fallback(n_markets)
+
+    print(f"  Found {len(resolved)} resolved markets")
 
     all_prices = []
     all_payoffs = []
     all_instruments = []
     all_categories = []
 
+    for ticker, result, n_trades in resolved:
+        category = _categorize_kalshi_ticker(ticker)
+        payoff = 1.0 if result == "yes" else 0.0
+
+        # Load trade-level prices
+        trades = con.execute(f"""
+            SELECT
+                yes_price::DOUBLE / 100.0 AS price,
+                count::DOUBLE AS trade_size
+            FROM read_parquet('{KALSHI_GLOB}', union_by_name=true)
+            WHERE ticker = ?
+              AND created_time IS NOT NULL
+              AND yes_price >= 1 AND yes_price <= 99
+            ORDER BY created_time
+            LIMIT 2000
+        """, [ticker]).df()
+
+        if len(trades) < 50:
+            continue
+
+        prices = trades["price"].values
+        n = len(prices)
+
+        # Binary payoff (same for all trades in a resolved market)
+        payoffs = np.full(n, payoff)
+
+        # Instruments: price level, rolling abs-return (vol proxy), time
+        abs_ret = np.abs(np.diff(np.concatenate([[prices[0]], prices])))
+        instruments = np.column_stack([
+            prices,
+            abs_ret,
+            np.linspace(0, 1, n),
+        ])
+
+        all_prices.append(prices)
+        all_payoffs.append(payoffs)
+        all_instruments.append(instruments)
+        all_categories.extend([category] * n)
+
+    con.close()
+
+    if not all_prices:
+        print("  No usable data after filtering, falling back to synthetic")
+        return _generate_synthetic_fallback(n_markets)
+
+    return {
+        "prices": np.concatenate(all_prices),
+        "payoffs": np.concatenate(all_payoffs),
+        "instruments": np.vstack(all_instruments),
+        "categories": np.array(all_categories),
+        "data_source": "real",
+    }
+
+
+def _generate_synthetic_fallback(n_markets: int = 20, n_trades_per: int = 500,
+                                  seed: int = 42) -> dict:
+    """Generate synthetic data as fallback when real data is unavailable."""
+    rng = np.random.RandomState(seed)
+    all_prices, all_payoffs, all_instruments, all_categories = [], [], [], []
     categories = ["political", "sports", "economic"]
 
     for m in range(n_markets):
         cat = categories[m % len(categories)]
-
-        # True probability of event
-        true_p = rng.beta(2, 2)  # Centered around 0.5
-
-        # Risk premium varies by category
-        if cat == "political":
-            rp = rng.normal(0.02, 0.01)  # Political: slight overpricing
-        elif cat == "sports":
-            rp = rng.normal(-0.01, 0.02)  # Sports: slight underpricing
-        else:
-            rp = rng.normal(0.0, 0.015)  # Economic: roughly fair
-
-        # Market prices = true probability + risk premium + noise
+        true_p = rng.beta(2, 2)
+        rp = rng.normal({"political": 0.02, "sports": -0.01}.get(cat, 0.0), 0.015)
         noise = rng.normal(0, 0.05, n_trades_per)
         prices = np.clip(true_p + rp + noise, 0.01, 0.99)
-
-        # Outcomes (binary resolution)
         outcomes = (rng.random(n_trades_per) < true_p).astype(float)
-
-        # Instruments: price level, volatility proxy, time
         instruments = np.column_stack([
-            prices,  # Price level
-            np.abs(np.diff(np.concatenate([[prices[0]], prices]))),  # Volatility proxy
-            np.linspace(0, 1, n_trades_per),  # Time progression
+            prices,
+            np.abs(np.diff(np.concatenate([[prices[0]], prices]))),
+            np.linspace(0, 1, n_trades_per),
         ])
-
         all_prices.append(prices)
         all_payoffs.append(outcomes)
         all_instruments.append(instruments)
@@ -420,6 +504,7 @@ def generate_synthetic_market_data(n_markets: int = 20, n_trades_per: int = 500,
         "payoffs": np.concatenate(all_payoffs),
         "instruments": np.vstack(all_instruments),
         "categories": np.array(all_categories),
+        "data_source": "synthetic",
     }
 
 
@@ -434,9 +519,10 @@ def run_gmm_analysis(n_markets: int = 20, output_path: str = None):
     if output_path is None:
         output_path = str(ROOT / "artifacts" / "gmm_sdf_results.json")
 
-    # Generate synthetic data (replace with real data loading in production)
-    print("Loading data (synthetic for proof-of-concept)...")
-    data = generate_synthetic_market_data(n_markets=n_markets)
+    # Load real Kalshi data (falls back to synthetic if no resolved markets)
+    print("Loading market data...")
+    data = load_real_market_data(n_markets=n_markets)
+    data_source = data.get("data_source", "unknown")
     prices = data["prices"]
     payoffs = data["payoffs"]
     instruments = data["instruments"]
@@ -488,7 +574,7 @@ def run_gmm_analysis(n_markets: int = 20, output_path: str = None):
         "method": "Two-step GMM with linear SDF",
         "n_markets": n_markets,
         "n_observations": len(prices),
-        "note": "Synthetic data for proof-of-concept. Replace with actual market data.",
+        "data_source": data_source,
         "risk_neutral_probs": {
             "mean": round(float(np.mean(rn_probs)), 6),
             "std": round(float(np.std(rn_probs)), 6),

@@ -23,12 +23,17 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Optional
 
+import duckdb
 import numpy as np
 import pandas as pd
 from scipy import stats
 from scipy.optimize import minimize
 
 ROOT = Path(__file__).resolve().parents[2]
+KALSHI_GLOB = str(ROOT / "data" / "raw" / "kalshi" / "trades" / "*.parquet")
+KALSHI_MARKETS_GLOB = str(ROOT / "data" / "raw" / "kalshi" / "markets" / "*.parquet")
+POLY_GLOB = str(ROOT / "data" / "raw" / "polymarket" / "trades" / "*.parquet")
+POLY_BLOCKS_GLOB = str(ROOT / "data" / "raw" / "polymarket" / "blocks" / "*.parquet")
 
 
 # ---------------------------------------------------------------------------
@@ -335,81 +340,336 @@ def to_pseudo_observations(x: np.ndarray) -> np.ndarray:
 
 
 # ---------------------------------------------------------------------------
-# Synthetic matched event pipeline
+# Matched Event Identification (Real Data)
 # ---------------------------------------------------------------------------
 
-def generate_synthetic_matched_data(n: int = 500, rho: float = 0.6,
-                                     tail_dep: bool = True) -> tuple:
+# Known matched events: Kalshi ticker patterns → Polymarket keywords
+# We match via Kalshi market titles containing these keywords, then
+# find corresponding Polymarket markets by matching daily return patterns.
+MATCHED_EVENT_KEYWORDS = {
+    "presidential_2024": {
+        "kalshi_pattern": "PRES-2024",
+        "description": "2024 Presidential Election markets",
+    },
+    "fed_rate": {
+        "kalshi_pattern": "FED",
+        "description": "Federal Reserve rate decision markets",
+    },
+    "btc_price": {
+        "kalshi_pattern": "BTC",
+        "description": "Bitcoin price threshold markets",
+    },
+    "nfl_games": {
+        "kalshi_pattern": "NFL",
+        "description": "NFL game outcome markets",
+    },
+    "cpi_inflation": {
+        "kalshi_pattern": "CPI",
+        "description": "CPI / inflation data markets",
+    },
+}
+
+
+def _load_kalshi_daily_returns(con: duckdb.DuckDBPyConnection,
+                                ticker_pattern: str,
+                                max_markets: int = 5) -> pd.DataFrame:
+    """Load daily mid-price returns for Kalshi markets matching a pattern."""
+    df = con.execute(f"""
+        WITH market_trades AS (
+            SELECT
+                ticker,
+                DATE_TRUNC('day', created_time) AS trade_date,
+                AVG(yes_price::DOUBLE / 100.0) AS mid_price,
+                COUNT(*) AS n_trades
+            FROM read_parquet('{KALSHI_GLOB}', union_by_name=true)
+            WHERE ticker LIKE ? || '%'
+              AND created_time IS NOT NULL
+              AND yes_price >= 1 AND yes_price <= 99
+            GROUP BY ticker, trade_date
+        ),
+        top_markets AS (
+            SELECT ticker, SUM(n_trades) AS total_trades
+            FROM market_trades
+            GROUP BY ticker
+            ORDER BY total_trades DESC
+            LIMIT {max_markets}
+        )
+        SELECT mt.ticker, mt.trade_date, mt.mid_price, mt.n_trades
+        FROM market_trades mt
+        JOIN top_markets tm ON mt.ticker = tm.ticker
+        ORDER BY mt.ticker, mt.trade_date
+    """, [ticker_pattern]).df()
+    return df
+
+
+def _load_polymarket_daily_returns(con: duckdb.DuckDBPyConnection,
+                                    max_markets: int = 10,
+                                    min_trades: int = 500) -> pd.DataFrame:
     """
-    Generate synthetic matched event returns for testing.
-    In production, this would be replaced by actual matched event data
-    from Kalshi and Polymarket.
+    Load daily returns for top Polymarket markets.
+
+    Polymarket price derivation:
+    - maker_asset_id = '0': buyer pays USDC → price = maker_amount / taker_amount
+    - maker_asset_id != '0': seller offers tokens → price = taker_amount / maker_amount
     """
-    if tail_dep:
-        # Student-t copula with low df for tail dependence
-        nu = 4
-        z = np.random.multivariate_normal([0, 0], [[1, rho], [rho, 1]], size=n)
-        chi2 = np.random.chisquare(nu, size=n) / nu
-        t_samples = z / np.sqrt(chi2[:, None])
-        u = stats.t.cdf(t_samples[:, 0], df=nu)
-        v = stats.t.cdf(t_samples[:, 1], df=nu)
-    else:
-        # Gaussian copula (no tail dependence)
-        z = np.random.multivariate_normal([0, 0], [[1, rho], [rho, 1]], size=n)
-        u = stats.norm.cdf(z[:, 0])
-        v = stats.norm.cdf(z[:, 1])
+    df = con.execute(f"""
+        WITH poly_prices AS (
+            SELECT
+                CASE WHEN maker_asset_id = '0' THEN taker_asset_id
+                     ELSE maker_asset_id END AS market_id,
+                CASE WHEN maker_asset_id = '0'
+                     THEN maker_amount::DOUBLE / NULLIF(taker_amount::DOUBLE, 0)
+                     ELSE taker_amount::DOUBLE / NULLIF(maker_amount::DOUBLE, 0)
+                END AS price,
+                b.timestamp AS trade_time
+            FROM read_parquet('{POLY_GLOB}', union_by_name=true) t
+            JOIN read_parquet('{POLY_BLOCKS_GLOB}', union_by_name=true) b
+              ON t.block_number = b.block_number
+            WHERE b.timestamp IS NOT NULL
+        ),
+        daily AS (
+            SELECT
+                market_id,
+                DATE_TRUNC('day', trade_time) AS trade_date,
+                AVG(price) AS mid_price,
+                COUNT(*) AS n_trades
+            FROM poly_prices
+            WHERE price > 0.01 AND price < 0.99
+            GROUP BY market_id, trade_date
+        ),
+        top_mkts AS (
+            SELECT market_id, SUM(n_trades) AS total_trades
+            FROM daily
+            GROUP BY market_id
+            HAVING SUM(n_trades) >= {min_trades}
+            ORDER BY total_trades DESC
+            LIMIT {max_markets}
+        )
+        SELECT d.market_id, d.trade_date, d.mid_price, d.n_trades
+        FROM daily d
+        JOIN top_mkts tm ON d.market_id = tm.market_id
+        ORDER BY d.market_id, d.trade_date
+    """).df()
+    return df
 
-    return u, v
+
+def _compute_daily_returns(df: pd.DataFrame, id_col: str) -> pd.DataFrame:
+    """Compute daily log-returns from mid-price series."""
+    results = []
+    for mid, grp in df.groupby(id_col):
+        grp = grp.sort_values("trade_date")
+        if len(grp) < 10:
+            continue
+        grp = grp.copy()
+        grp["ret"] = np.log(grp["mid_price"] / grp["mid_price"].shift(1))
+        grp = grp.dropna(subset=["ret"])
+        results.append(grp)
+    if not results:
+        return pd.DataFrame()
+    return pd.concat(results, ignore_index=True)
 
 
-def run_copula_analysis(output_path: str = None):
+def _match_by_date_correlation(kalshi_rets: pd.DataFrame,
+                                poly_rets: pd.DataFrame,
+                                min_overlap_days: int = 20) -> list:
     """
-    Run copula analysis on matched events.
+    Match Kalshi and Polymarket markets by daily return correlation.
 
-    NOTE: This currently uses synthetic data as a proof of concept.
-    The matched event identification from actual Kalshi/Polymarket data
-    requires market metadata matching (e.g., both platforms trading the
-    same presidential election outcome) and time-alignment of returns.
+    For each Kalshi market, find the Polymarket market with the highest
+    absolute Pearson correlation on overlapping dates. This heuristic
+    works because markets on the same event should co-move.
+    """
+    matches = []
+    kalshi_markets = kalshi_rets["ticker"].unique()
+    poly_markets = poly_rets["market_id"].unique()
+
+    for k_mkt in kalshi_markets:
+        k_df = kalshi_rets[kalshi_rets["ticker"] == k_mkt].set_index("trade_date")
+
+        best_corr = 0
+        best_poly = None
+        best_n = 0
+
+        for p_mkt in poly_markets:
+            p_df = poly_rets[poly_rets["market_id"] == p_mkt].set_index("trade_date")
+
+            # Find overlapping dates
+            common = k_df.index.intersection(p_df.index)
+            if len(common) < min_overlap_days:
+                continue
+
+            corr = np.corrcoef(k_df.loc[common, "ret"].values,
+                               p_df.loc[common, "ret"].values)[0, 1]
+
+            if abs(corr) > abs(best_corr):
+                best_corr = corr
+                best_poly = p_mkt
+                best_n = len(common)
+
+        if best_poly is not None and abs(best_corr) > 0.15:
+            matches.append({
+                "kalshi": k_mkt,
+                "polymarket": best_poly,
+                "correlation": round(float(best_corr), 4),
+                "n_overlap_days": best_n,
+            })
+
+    return matches
+
+
+def load_matched_event_returns(con: duckdb.DuckDBPyConnection,
+                                event_name: str,
+                                kalshi_pattern: str) -> Optional[tuple]:
+    """
+    Load matched daily returns for a specific event category.
+
+    Returns (kalshi_returns, poly_returns, match_info) or None if no match.
+    """
+    print(f"  Loading Kalshi markets matching '{kalshi_pattern}'...")
+    kalshi_daily = _load_kalshi_daily_returns(con, kalshi_pattern, max_markets=5)
+    if kalshi_daily.empty:
+        print(f"  No Kalshi markets found for pattern '{kalshi_pattern}'")
+        return None
+
+    kalshi_rets = _compute_daily_returns(kalshi_daily, "ticker")
+    if kalshi_rets.empty:
+        return None
+
+    print(f"  Found {kalshi_rets['ticker'].nunique()} Kalshi markets, "
+          f"loading Polymarket for matching...")
+
+    # Load top Polymarket markets for correlation matching
+    poly_daily = _load_polymarket_daily_returns(con, max_markets=20, min_trades=200)
+    if poly_daily.empty:
+        print(f"  No Polymarket data available")
+        return None
+
+    poly_rets = _compute_daily_returns(poly_daily, "market_id")
+    if poly_rets.empty:
+        return None
+
+    print(f"  Matching across {poly_rets['market_id'].nunique()} Polymarket markets...")
+    matches = _match_by_date_correlation(kalshi_rets, poly_rets, min_overlap_days=15)
+
+    if not matches:
+        print(f"  No matches found for '{event_name}'")
+        return None
+
+    # Use the best match (highest correlation)
+    best = max(matches, key=lambda m: abs(m["correlation"]))
+    print(f"  Best match: {best['kalshi']} <-> {best['polymarket'][:16]}... "
+          f"(r={best['correlation']:.3f}, n={best['n_overlap_days']} days)")
+
+    # Extract aligned returns
+    k_df = kalshi_rets[kalshi_rets["ticker"] == best["kalshi"]].set_index("trade_date")
+    p_df = poly_rets[poly_rets["market_id"] == best["polymarket"]].set_index("trade_date")
+    common = k_df.index.intersection(p_df.index)
+
+    k_ret = k_df.loc[common, "ret"].values
+    p_ret = p_df.loc[common, "ret"].values
+
+    return k_ret, p_ret, best
+
+
+def run_copula_analysis(output_path: str = None, use_synthetic_fallback: bool = True):
+    """
+    Run copula analysis on matched events across Kalshi and Polymarket.
+
+    Attempts to load real matched event data. Falls back to synthetic data
+    if real data matching fails (e.g., insufficient overlap).
     """
     print("=== Copula Cross-Platform Dependence Analysis ===\n")
 
     if output_path is None:
         output_path = str(ROOT / "artifacts" / "copula_results.json")
 
+    con = duckdb.connect()
     results = []
+    data_source = "real"
 
-    # Synthetic matched events for demonstration
-    # In production: replace with actual matched event data loading
-    events = [
-        ("presidential_2024_synthetic", 0.65, True),
-        ("super_bowl_synthetic", 0.45, True),
-        ("fed_rate_synthetic", 0.70, False),
-        ("nfl_game_synthetic", 0.30, True),
-        ("crypto_price_synthetic", 0.55, True),
-    ]
+    for event_name, event_info in MATCHED_EVENT_KEYWORDS.items():
+        print(f"\nEvent: {event_name} ({event_info['description']})")
 
-    for event_name, rho, tail_dep in events:
-        np.random.seed(42)
-        u, v = generate_synthetic_matched_data(n=500, rho=rho, tail_dep=tail_dep)
+        match = load_matched_event_returns(con, event_name, event_info["kalshi_pattern"])
 
-        # Convert to pseudo-observations (in case of real data)
-        u_pseudo = to_pseudo_observations(u)
-        v_pseudo = to_pseudo_observations(v)
+        if match is not None:
+            k_ret, p_ret, match_info = match
+            u = to_pseudo_observations(k_ret)
+            v = to_pseudo_observations(p_ret)
+            n_obs = len(u)
+            extra_info = {
+                "data_source": "real",
+                "kalshi_market": match_info["kalshi"],
+                "polymarket_market": match_info["polymarket"],
+                "raw_correlation": match_info["correlation"],
+                "n_overlap_days": match_info["n_overlap_days"],
+            }
+        elif use_synthetic_fallback:
+            print(f"  Falling back to synthetic data for {event_name}")
+            np.random.seed(hash(event_name) % (2**31))
+            rho = 0.5
+            n_obs = 300
+            z = np.random.multivariate_normal([0, 0], [[1, rho], [rho, 1]], size=n_obs)
+            nu = 4
+            chi2 = np.random.chisquare(nu, size=n_obs) / nu
+            t_samples = z / np.sqrt(chi2[:, None])
+            u = to_pseudo_observations(stats.t.cdf(t_samples[:, 0], df=nu))
+            v = to_pseudo_observations(stats.t.cdf(t_samples[:, 1], df=nu))
+            extra_info = {"data_source": "synthetic", "note": "No matched real data found"}
+            data_source = "mixed"
+        else:
+            continue
 
-        result = fit_all_copulas(u_pseudo, v_pseudo, event_name)
+        result = fit_all_copulas(u, v, event_name)
         results.append(result)
 
-        print(f"Event: {event_name}")
+        # Store extra info
+        result_dict = asdict(result)
+        result_dict.update(extra_info)
+
         print(f"  Best copula: {result.best_copula} (AIC={result.aic:.1f})")
         print(f"  Tail dependence: upper={result.lambda_upper:.4f}, "
               f"lower={result.lambda_lower:.4f}")
         print(f"  Kendall's tau: {result.kendall_tau:.4f}")
-        print()
+
+    con.close()
+
+    # Also run on aggregate: pool all Kalshi daily returns vs all Polymarket daily returns
+    print("\n--- Aggregate Cross-Platform Analysis ---")
+    con2 = duckdb.connect()
+    try:
+        kalshi_agg = _load_kalshi_daily_returns(con2, "PRES", max_markets=3)
+        poly_agg = _load_polymarket_daily_returns(con2, max_markets=5, min_trades=1000)
+
+        if not kalshi_agg.empty and not poly_agg.empty:
+            k_agg_rets = _compute_daily_returns(kalshi_agg, "ticker")
+            p_agg_rets = _compute_daily_returns(poly_agg, "market_id")
+
+            # Pool all returns by date
+            k_daily = k_agg_rets.groupby("trade_date")["ret"].mean()
+            p_daily = p_agg_rets.groupby("trade_date")["ret"].mean()
+            common_dates = k_daily.index.intersection(p_daily.index)
+
+            if len(common_dates) >= 30:
+                u_agg = to_pseudo_observations(k_daily.loc[common_dates].values)
+                v_agg = to_pseudo_observations(p_daily.loc[common_dates].values)
+                agg_result = fit_all_copulas(u_agg, v_agg, "aggregate_cross_platform")
+                results.append(agg_result)
+                print(f"  Aggregate: {agg_result.best_copula} (AIC={agg_result.aic:.1f}), "
+                      f"n={len(common_dates)} days")
+            else:
+                print(f"  Only {len(common_dates)} overlapping dates — skipping aggregate")
+        else:
+            print("  Insufficient data for aggregate analysis")
+    except Exception as e:
+        print(f"  Aggregate analysis failed: {e}")
+    finally:
+        con2.close()
 
     # Save results
     output = {
         "n_events": len(results),
-        "note": "Synthetic data for proof-of-concept. Replace with actual matched events.",
+        "data_source": data_source,
         "events": [asdict(r) for r in results],
         "summary": {
             "best_copulas": {r.event_name: r.best_copula for r in results},
@@ -422,7 +682,7 @@ def run_copula_analysis(output_path: str = None):
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
 
-    print(f"Results saved to {output_path}")
+    print(f"\nResults saved to {output_path}")
     return results
 
 
