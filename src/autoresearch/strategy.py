@@ -19,7 +19,7 @@ DD_SOFT_START = 0.08
 DD_HARD_STOP = 0.16
 TURNOVER_THRESHOLD = 0.15
 SIGNAL_SCALE = 0.4
-TAIL_SCALE_FACTOR = 2.0
+TAIL_SCALE_FACTOR = 1.0
 
 
 class TailRiskStrategy(Strategy):
@@ -35,7 +35,7 @@ class TailRiskStrategy(Strategy):
         self._call_idx: int = 0
 
     def name(self) -> str:
-        return "logreg-boundary-v5"
+        return "logreg-low-tail-def-v9"
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray,
               feature_names: list[str]) -> None:
