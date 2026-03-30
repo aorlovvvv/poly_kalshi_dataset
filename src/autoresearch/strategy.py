@@ -18,7 +18,7 @@ from .interfaces import PortfolioState, Strategy
 DD_SOFT_START = 0.08
 DD_HARD_STOP = 0.16
 TURNOVER_THRESHOLD = 0.50
-SIGNAL_SCALE = 0.4
+SIGNAL_SCALE = 0.5
 TAIL_SCALE_FACTOR = 0.5
 
 
