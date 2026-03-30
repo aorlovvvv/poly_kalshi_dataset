@@ -43,10 +43,12 @@ TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
 LAG1_WEIGHT = 0.7           # weight on lag_ret_1 in combined momentum
 LAG2_WEIGHT = 0.2           # weight on lag_ret_2 in combined momentum
 BOUNDARY_COEFF = 2.0        # boost for prices near 0/1 boundaries
+DIR_BLEND = 0.3             # weight on ML direction model (vs hand-crafted)
 
 # Model
 MODEL_C = 0.01              # LogisticRegression regularization
 MODEL_MAX_ITER = 200
+DIR_MODEL_C = 0.1           # regularization for direction model
 
 # ---------------------------------------------------------------------------
 # Strategy
@@ -59,10 +61,15 @@ class TailRiskStrategy(Strategy):
         self.model = LogisticRegression(
             C=MODEL_C, max_iter=MODEL_MAX_ITER, random_state=42,
         )
+        self.dir_scaler = StandardScaler()
+        self.dir_model = LogisticRegression(
+            C=DIR_MODEL_C, max_iter=MODEL_MAX_ITER, random_state=42,
+        )
         self._feature_names: list[str] = []
         self._importances: dict[str, float] = {}
         self._direction_signals: list[float] = []
         self._call_idx: int = 0
+        self._direction_target: np.ndarray | None = None
 
     def name(self) -> str:
         return "sqrt-3trade-tanh-v37"
@@ -72,6 +79,11 @@ class TailRiskStrategy(Strategy):
         self._feature_names = list(feature_names)
         X_scaled = self.scaler.fit_transform(X_train)
         self.model.fit(X_scaled, y_train)
+
+        if self._direction_target is not None:
+            X_dir = self.dir_scaler.fit_transform(X_train)
+            self.dir_model.fit(X_dir, self._direction_target)
+
         coefs = np.abs(self.model.coef_[0])
         total = coefs.sum()
         self._importances = {
@@ -101,8 +113,17 @@ class TailRiskStrategy(Strategy):
 
         sqrt_signal = -np.sign(combined_ret) * np.sqrt(np.abs(combined_ret))
         sqrt_vol = np.sqrt(vols_safe)
+        hand_crafted = sqrt_signal / sqrt_vol * boundary_boost
 
-        self._direction_signals = (sqrt_signal / sqrt_vol * boundary_boost).tolist()
+        if self._direction_target is not None:
+            X_dir = self.dir_scaler.transform(X)
+            dir_prob = self.dir_model.predict_proba(X_dir)[:, 1]
+            dir_signal = (dir_prob - 0.5) * 2.0  # map [0,1] -> [-1,1]
+            blended = (1 - DIR_BLEND) * hand_crafted + DIR_BLEND * dir_signal
+        else:
+            blended = hand_crafted
+
+        self._direction_signals = blended.tolist()
         self._call_idx = 0
 
         return probs
@@ -150,6 +171,7 @@ next_rets = test_df["next_ret"].values.astype(np.float64)
 
 # Train
 strategy = TailRiskStrategy()
+strategy._direction_target = (train_df["next_ret"] > 0).astype(int).values
 print(f"Strategy: {strategy.name()}")
 strategy.train(X_train, y_train, feature_names)
 
