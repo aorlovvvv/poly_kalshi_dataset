@@ -45,7 +45,7 @@ LAG2_WEIGHT = 0.2           # weight on lag_ret_2 in combined momentum
 BOUNDARY_COEFF = 2.0        # boost for prices near 0/1 boundaries
 
 # Model
-MODEL_C = 1.0               # LogisticRegression regularization
+MODEL_C = 0.1               # LogisticRegression regularization
 MODEL_MAX_ITER = 500
 
 # ---------------------------------------------------------------------------
