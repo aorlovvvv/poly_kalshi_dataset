@@ -64,7 +64,7 @@ class TailRiskStrategy(Strategy):
         bds = X[:, bd_idx]
         vols_safe = np.where(vols > 1e-6, vols, 1e-6)
 
-        combined_ret = rets + 0.3 * np.nan_to_num(lag_rets, 0.0)
+        combined_ret = rets + 0.5 * np.nan_to_num(lag_rets, 0.0)
         boundary_boost = 1.0 + 2.0 * (0.5 - np.clip(bds, 0, 0.5))
 
         self._direction_signals = (-combined_ret / vols_safe * boundary_boost).tolist()
