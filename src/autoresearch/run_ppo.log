@@ -1,0 +1,29 @@
+Data: 1,599,872 train, 399,968 test, 40 markets
+Strategy: ppo-64h-50ep-sharpe
+Training PPO agent: 50 episodes, obs_dim=17, hidden=64
+  Episode 10/50: return=-11918.2464, mean_10=-12110.4481, equity=-597.7131
+  Episode 20/50: return=-10905.9091, mean_10=-11426.8478, equity=-687.1820
+  Episode 30/50: return=-10551.8420, mean_10=-10630.7678, equity=-703.9788
+  Episode 40/50: return=-10178.4379, mean_10=-10326.7022, equity=-690.0944
+  Episode 50/50: return=-10240.1558, mean_10=-10273.2907, equity=-694.9039
+
+---
+sharpe_ratio:          -14.581683
+sortino_ratio:         -14.581683
+avg_per_market_sharpe: -16.170282
+total_return:          -4518.043103
+max_drawdown:          4303.438065
+win_rate:              0.1000
+n_trades:              399968
+n_days:                35
+n_markets:             10
+mean_position:         1.0000
+auc_roc_IGNORE:        0.5413  # meaningless — ret leaks into target
+elapsed_seconds:       72.5
+
+Top features:
+  rolling_vol_50            0.1658
+  day_of_week               0.1320
+  ret                       0.1084
+  buy_imbalance_20          0.0928
+  price_boundary_dist       0.0841

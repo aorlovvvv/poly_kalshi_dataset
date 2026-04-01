@@ -1,0 +1,23 @@
+Data: 1,599,872 train, 399,968 test, 40 markets
+Strategy: sqrt-3trade-tanh-v37
+
+---
+sharpe_ratio:          -12.444913
+sortino_ratio:         -12.444913
+avg_per_market_sharpe: -13.389393
+total_return:          -9169.646099
+max_drawdown:          9169.646099
+win_rate:              0.0784
+n_trades:              399968
+n_days:                35
+n_markets:             10
+mean_position:         0.6224
+auc_roc_IGNORE:        0.8262  # meaningless — ret leaks into target
+elapsed_seconds:       2.5
+
+Top features:
+  rolling_vol_10            0.2025
+  taker_buy                 0.1758
+  lag_taker_1               0.1490
+  day_of_week               0.1327
+  buy_imbalance_20          0.0785
