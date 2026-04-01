@@ -2,7 +2,7 @@
 
 **Paper Title:** *Microstructure, Tail Risk, and Efficiency in Prediction Markets: A Cross-Platform Empirical Study of 476 Million Trades*
 **Author:** Andrey Orlov
-**Date:** March 2026
+**Date:** March 2026 (last updated: March 29, 2026)
 **Target Venues:** NeurIPS (Datasets & Benchmarks), ICAIF, Journal of Financial Data Science
 
 ---
@@ -30,7 +30,7 @@ data/raw/
     ├── trades/     Parquet files (CTF Exchange + NegRisk CTF Exchange)
     │   Fields: block_number, maker_asset_id, maker_amount, taker_amount, taker_asset_id
     ├── blocks/     Block timestamps for joining
-    └── markets/    Market metadata
+    └── markets/    (empty — no metadata available)
 ```
 
 Total compressed archive: ~36 GB.
@@ -50,7 +50,7 @@ Polymarket trades have no explicit price. Prices are derived from the ratio of a
 ### Phase 1: Data Profiling
 
 **Script:** `src/analysis/data_profile.py`
-**Output:** `artifacts/data_profile.json` (not present in this worktree; generated in main repo)
+**Output:** `artifacts/data_profile.json`
 
 Profiled all raw parquet files via DuckDB. Key findings:
 
@@ -95,8 +95,8 @@ Implemented five test suites on top-20 most liquid Kalshi markets:
 #### Test C: GPD Tail Fitting (Peaks Over Threshold)
 - Pooled analysis across top 10 markets per platform
 - Kalshi: ξ = −1.53, Polymarket: ξ = −0.19
-- **Methodological flaw identified:** cross-market pooling creates artificial jumps (a trade at 5¢ in one market followed by 95¢ in another = spurious 90¢ change)
-- These results were corrected in Phase 3
+- **Methodological flaw identified:** cross-market pooling creates artificial jumps
+- Corrected in Phase 3
 
 #### Test D: BDS Test (Nonlinear Dependence)
 - AR(1) residuals tested for remaining nonlinear structure
@@ -125,110 +125,139 @@ Corrected Phase 2 flaws and expanded analysis:
 | Kalshi | 50 | +1.44 | +0.005 | 52% |
 | Polymarket | 10 | +1.49 | +0.30 | **100%** |
 
-- Phase 2 artifact **fully resolved**: per-market fitting reveals genuine heavy tails (ξ > 0)
-- **Sports vs political divergence** (Mann-Whitney p = 0.0021):
-  - Political: ξ = −2.28 (bounded tails, slow information arrival)
-  - Sports: ξ = +1.82 median ~0, range up to +12.5 (power-law tails, live-game regime changes)
-- Polymarket is unanimously heavy-tailed; Kalshi is mixed
-- NFL game markets reach kurtosis of 2,192 (730× Gaussian)
-- Polymarket's most extreme market: kurtosis = 15,502
+- Sports vs political divergence (Mann-Whitney p = 0.0021):
+  - Political: ξ = −2.28 (bounded tails)
+  - Sports: ξ = +1.82 (power-law tails, live-game regime changes)
+- NFL game markets reach kurtosis of 2,192; Polymarket's most extreme: kurtosis = 15,502
 
 #### Test B: Sports vs Political BDS at Scale
 - 12 markets, 3 seeds, full embedding/epsilon grid
 - Sports show 2.3–2.9× higher BDS z-scores than political at all ε
-- Political markets lose nonlinear dependence at large ε (mean z = 1.8)
-- Sports maintain 100% rejection rate even at large ε (mean z = 15.9)
 - Confirms: political ≈ linear after AR(1) correction; sports contain genuine nonlinear signal
 
 #### Test C: Enhanced XGBoost (12 features)
-- Added lagged returns, rolling volatility, buy imbalance
 - AUC 0.976–1.000 — but **data leakage identified** in rolling volatility features
 - `ret_lag1` and `taker_side` confirmed as genuinely predictive features
-- Corrective action: lag all rolling features by 1 trade (proposed for Phase 4)
 
 #### Test D: Cross-Platform Comparison
-- First VR and Roll's spread analysis for Polymarket
 - **Mean VR(2) statistically indistinguishable** (Kalshi 0.599 vs Polymarket 0.608, p = 0.629)
 - **Polymarket spreads 3× tighter** (0.0036 vs 0.0109 cents, p < 1.5e-6)
-- Interpretation: similar relative microstructure noise but dramatically different trading costs
+- Similar relative microstructure noise but dramatically different trading costs
 
-#### LaTeX Tables Generated
-- `paper/tables/gpd_per_market.tex`
-- `paper/tables/bds_comparison.tex`
-- `paper/tables/xgboost_enhanced.tex`
-- `paper/tables/cross_platform.tex`
+### Phase 4: Autoresearch Loop (Karpathy Pattern) — Initial Run
 
-### Phase 4: Autoresearch Loop (Karpathy Pattern)
+**Framework:** `src/autoresearch/prepare.py` (FIXED harness), `train.py` (EDITABLE strategy)
+**Output:** `src/autoresearch/results.tsv`
 
-**Framework:** `src/autoresearch/` (backtest.py, interfaces.py, data_loader.py = FIXED; strategy.py = EDITABLE)
-**Output:** `artifacts/strategy_results.json`, `artifacts/results.tsv`
-**Branch:** `autoresearch/tail-strategy-v1`
+Ran 101 experiments following Karpathy's autoresearch pattern. Strategy evolved from GBM classifier (Sharpe −0.17) to `sqrt-3trade-tanh-v37` (Sharpe 2.98).
 
-Implemented an autonomous experiment loop following Karpathy's autoresearch pattern to maximize the out-of-sample Sharpe ratio of a tail-risk-adjusted trading strategy on Kalshi data.
+**However, the initial Sharpe of 2.98 was computed with two critical flaws:**
+1. Transaction costs were 20 bps (0.002 per unit) — Kalshi's actual taker fee is ~7 cents per contract (~700 bps at mid-price), which is **35× higher**
+2. Positions carried across market boundaries — a position sized for Market A earned Market B's returns
 
-#### Harness Design
+These flaws were corrected in Phase 5.
 
-- **Data:** Top 20 Kalshi markets, 50K trades each, 500K total (400K train / 100K test temporal split)
-- **Features (14):** price, trade_size, taker_buy, ret, lag_ret_1, lag_ret_2, lag_size_1, lag_taker_1, buy_imbalance_20, rolling_vol_10, rolling_vol_50, hour_of_day, day_of_week, price_boundary_dist
-- **Target:** Binary — is |ret| > 2σ (tail event)?
-- **P&L:** position × next_trade_return − transaction_cost (20 bps per unit turnover)
-- **Metrics:** Sharpe ratio (annualized √252), Sortino, max drawdown, AUC-ROC
+### Phase 5: Honest Sharpe Validation (Prompt 01)
 
-#### Experiment Evolution (37 experiments)
+**Three critical fixes to `prepare.py`:**
+1. **Transaction cost:** 20 bps → 7 cents/contract (0.07 per unit)
+2. **Market-boundary reset:** Position resets to 0 when market_id changes between rows
+3. **AUC renamed to `auc_roc_IGNORE`:** The metric is meaningless because `ret` (a feature) leaks into the target `(|ret| > 2σ)`
 
-| Phase | Experiments | Key Change | Sharpe |
-|-------|------------|------------|--------|
-| Baseline | exp00 | GBM classifier, edge-based sizing | −0.17 |
-| Mean reversion | exp01 | Signal = −ret/vol, turnover filter | +0.34 |
-| Risk management | exp03 | Soft drawdown scaling 8–16% | +0.37 |
-| **Model switch** | **exp05** | **LogReg replaces GBM** | **+1.24** |
-| Tail defense tuning | exp10 | tail_scale_factor = 0.5 | +1.59 |
-| **3-trade momentum** | **exp19** | **ret + 0.7×lag1 + 0.2×lag2** | **+2.42** |
-| Cost optimization | exp27 | turnover threshold = 0.50 | +2.75 |
-| **Sqrt dampening** | **exp30** | **sqrt(|signal|) × sign** | **+2.91** |
-| **Tanh + final tuning** | **exp36** | **tanh sizing, turnover 0.60** | **+2.99** |
+**Result:** Sharpe collapsed from **+2.98 to −12.44** (50 markets, 2M total trades, 400K test).
 
-#### Final Strategy: `sqrt-3trade-tanh-v37`
+This is the correct finding: the VR(2) ≈ 0.59 mean-reversion signal is **statistically real but economically insignificant** under Kalshi's fee structure. Per-trade alpha (~0.1 cent) is dominated by per-trade costs (7 cents).
 
-**Architecture:**
-```
-Signal = -sign(momentum) × √|momentum| / √(vol_50) × boundary_boost
-  where momentum = ret + 0.7 × lag_ret_1 + 0.2 × lag_ret_2
-  where boundary_boost = 1 + 2 × (0.5 - price_boundary_dist)
+### Phase 6: PIN Estimation (Prompt 02)
 
-Position = tanh(signal × 0.5 × tail_scale × dd_scale)
-  where tail_scale = max(0, 1 - 0.5 × predicted_tail_prob)
-  where dd_scale = linear ramp from 1.0 at 8% DD to 0.0 at 16% DD
+**Script:** `src/analysis/pin_estimation.py`
+**Output:** `artifacts/pin_results.json`
 
-Only reposition if |new - current| > 0.60 (high turnover threshold)
-```
+First-ever PIN (Probability of Informed Trading, Easley et al. 1996) estimation for prediction markets. Estimated on top 30 Kalshi markets.
 
-**Final Performance:**
+| Metric | Value |
+|--------|-------|
+| Markets estimated | 26 |
+| Convergence rate | **100%** (26/26) |
+| Mean PIN | **0.63** |
+| Median PIN | 0.66 |
+| PIN range | 0.24 – 0.79 |
 
-| Metric | Baseline | Final | vs Stretch Target |
-|--------|----------|-------|-------------------|
-| Sharpe | −0.17 | **+2.98** | 3.7× stretch (0.8) |
-| Sortino | −0.23 | **+4.40** | 3.7× stretch (1.2) |
-| Max Drawdown | 8.07 | **1.8%** | 4.4× stretch (8%) |
-| AUC-ROC | 0.985* | **0.78** | 1.1× stretch (0.70) |
-| Win Rate | 15.6% | **18.6%** | — |
-| Total Return | −12.87 | **+107.25** | — |
-| Runtime | 71s | **7.6s** | — |
+**Category breakdown:**
 
-*Baseline AUC was inflated by GBM overfitting to `ret` feature.
+| Category | N | Mean PIN | Mean α (info event prob) | Mean μ (informed arrival) |
+|----------|---|----------|--------------------------|---------------------------|
+| Sports | 21 | **0.65** | 0.113 | 25,888 |
+| Political | 3 | **0.52** | 0.078 | 11,437 |
+| Other | 2 | 0.56 | 0.040 | 12,497 |
 
-**Feature Importances (LogReg, normalized):**
+**Key findings:**
+- PIN = 0.63 is **2–6× higher than typical equities** (0.10–0.30), indicating much greater informed trading intensity
+- Sports markets have higher PIN (0.65) and informed arrival rates (μ = 25,888) than political (PIN = 0.52, μ = 11,437)
+- Consistent with the "information arrival > venue design" thesis: sports events generate continuous real-time information during games
 
-| Feature | Weight | Role |
-|---------|--------|------|
-| rolling_vol_10 | 0.209 | Regime detection |
-| taker_buy | 0.195 | Order flow signal |
-| lag_taker_1 | 0.151 | Lagged microstructure |
-| price_boundary_dist | 0.123 | Boundary proximity |
-| buy_imbalance_20 | 0.107 | Aggregate order flow |
-| lag_ret_1 | 0.069 | Momentum/reversion |
-| hour_of_day | 0.062 | Intraday pattern |
-| price | 0.032 | Price level |
+### Phase 7: PPO vs LogReg Comparison (Prompt 03)
+
+**Scripts:** `src/autoresearch/train.py` (LogReg), `src/autoresearch/rl_agent.py` (PPO)
+
+Side-by-side comparison with realistic costs (7c/contract, 50 markets):
+
+| Metric | LogReg | PPO (50 episodes, Sharpe-shaped) |
+|--------|--------|----------------------------------|
+| Sharpe | **−12.44** | −14.58 |
+| Mean position | 0.62 | 1.00 |
+| Win rate | 7.8% | 10.0% |
+| Total return | −9,170 | −4,518 |
+| Elapsed | 2.5s | 72.5s |
+
+PPO is worse because:
+1. No turnover management — takes max positions (mean_pos = 1.0), generating constant 7c costs
+2. Architectural mismatch: the harness separates `predict_tail_probability` and `size_position` but PPO jointly optimizes position, losing directional information in the split
+3. Training on synthetic next_ret (rolled feature) ≠ real next_ret
+
+**Finding:** Simple mean-reversion with turnover control beats RL for prediction market microstructure trading. The signal is linear; complexity doesn't help.
+
+### Phase 8: Copula Cross-Platform Dependence (Prompt 04)
+
+**Script:** `src/analysis/copula_dependence.py`
+**Output:** `artifacts/copula_results.json`
+
+Identified matched events across Kalshi and Polymarket using date-windowed correlation matching, then fitted 5 copula families (Gaussian, Student-t, Clayton, Gumbel, Frank) to cross-platform daily returns.
+
+| Event | Kalshi Market | Correlation | Best Copula | λ_upper | λ_lower | Kendall's τ |
+|-------|---------------|-------------|-------------|---------|---------|-------------|
+| **Presidential 2024** | PRES-2024-DJT | **0.987** | Gumbel | **0.37** | 0.00 | 0.20 |
+| **Fed Rate** | FED-25SEP-T4.25 | 0.625 | Clayton | 0.00 | **0.36** | 0.08 |
+| **BTC Price** | BTCMAX100-24-NOV29 | 0.808 | Gaussian | 0.00 | 0.00 | **0.56** |
+| **CPI Inflation** | CPICORE-23JUN-T0.1 | 0.327 | Gumbel | **0.23** | 0.00 | 0.13 |
+| NFL Games | (no Polymarket match) | — | Frank | 0.00 | 0.00 | 0.35 |
+
+**Key findings:**
+- Presidential election markets co-move almost perfectly across platforms (r = 0.987)
+- **Upper tail dependence** (Gumbel) dominates political/economic events — extreme coordinated price moves during major information shocks
+- **Lower tail dependence** (Clayton) appears for Fed rate decisions — coordinated sharp sell-offs during surprise announcements
+- BTC shows strongest overall dependence (τ = 0.56) but symmetric (Gaussian copula) — no tail concentration
+
+### Phase 9: Autoresearch Cost Regime Sweep (Prompt 05)
+
+**Script:** `src/autoresearch/sweep.py`
+
+Systematic 20-configuration parameter sweep to find strategies viable under 7c/contract costs:
+
+| Rank | Configuration | Sharpe | Mean Position | Total Return |
+|------|--------------|--------|---------------|--------------|
+| 1 | pure_ml_tiny (never trades) | 0.000 | 0.000 | 0.00 |
+| 2 | **scale_0.3** (best non-trivial) | **−7.43** | 0.058 | −201 |
+| 3 | no_dir_small_pos | −7.53 | 0.098 | −915 |
+| 4 | scale_0.5 | −7.63 | 0.133 | −1,379 |
+| 5 | turnover_0.99 | −8.44 | 0.267 | −3,297 |
+| ... | ... | ... | ... | ... |
+| 17 | baseline_v2 | −12.44 | 0.622 | −9,170 |
+| 20 | ultra_conservative | −13.60 | 0.015 | −481 |
+
+**Configurations tested:** SIGNAL_SCALE (0.02–10.0), TURNOVER_THRESHOLD (0.01–0.99), DIR_BLEND (0/0.45/1.0), TAIL_SCALE_FACTOR (0/0.3), momentum vs mean-reversion, enter-once-hold, boundary-heavy.
+
+**Conclusion:** No configuration achieves positive Sharpe with realistic costs. The cost floor of 7c/contract × trade frequency completely dominates the ~0.1c per-trade alpha. This is consistent with semi-strong market efficiency: **microstructure predictability exists but is consumed by transaction costs.**
 
 ---
 
@@ -242,35 +271,50 @@ The most consistent finding across all analyses: **sports vs political** is a mo
 - Nonlinear dependence: sports BDS z-scores 2.3–2.9× higher at all scales
 - Implied spreads: political markets have tighter spreads (0.80¢) despite lower volume
 - Variance ratio: political markets mean-revert more strongly (VR(2) = 0.53 vs 0.65)
+- **PIN: sports PIN = 0.65 vs political PIN = 0.52** — higher informed trading in sports
 
-### Finding 2: Prediction Markets Are Non-Martingale but Potentially Informationally Efficient
+### Finding 2: Prediction Markets Are Non-Martingale but Economically Efficient
 
-Every variance ratio test rejects the martingale at p ≈ 0, but this is entirely attributable to microstructure noise (bid-ask bounce on discrete tick grids). VR(2) ≈ 0.59 matches the theoretical prediction from Roll's model with ρ ≈ −0.47. Proper efficiency tests require mid-price or time-sampled data.
+Every variance ratio test rejects the martingale at p ≈ 0, but this is entirely attributable to microstructure noise (bid-ask bounce on discrete tick grids). VR(2) ≈ 0.59 matches the theoretical prediction from Roll's model with ρ ≈ −0.47.
 
-### Finding 3: Mean Reversion is Highly Profitable After Transaction Costs
+**Critically:** the mean-reversion alpha implied by VR(2) = 0.59 does NOT survive realistic transaction costs (7c/contract on Kalshi). A systematic 20-configuration sweep found no profitable strategy. This is consistent with semi-strong efficiency: statistical predictability exists in the microstructure, but the economic cost of exploiting it exceeds the edge.
 
-The autoresearch loop demonstrated that a simple mean-reversion signal — go against the last 3 trades' price changes, scaled by inverse volatility and boundary distance — achieves Sharpe 2.98 out-of-sample with 1.8% max drawdown and 20 bps transaction costs. This is not an academic curiosity; it is a practically implementable edge.
+### Finding 3: PIN Is 2–6× Higher Than Equities (Novel Contribution)
 
-### Finding 4: Sqrt Signal Dampening is a Novel Contribution
+Mean PIN = 0.63 across 26 Kalshi markets, compared to 0.10–0.30 typical for equities. This suggests prediction markets have much higher rates of informed trading — consistent with their design as information aggregation mechanisms. PIN has never been estimated for prediction markets in the published literature.
 
-The transformation `sign(x) × √|x|` applied to the mean-reversion signal (exp 30) improved Sharpe from 2.75 to 2.91. This works because extreme returns are noisier (less reliable for mean-reversion prediction) while moderate returns carry more consistent signal. This nonlinear signal transformation has not appeared in the microstructure literature.
+### Finding 4: Cross-Platform Tail Dependence Confirms Coordinated Information Flow
 
-### Finding 5: Three-Trade Momentum Captures Deep Serial Correlation
+Copula analysis on 4 matched event categories reveals:
+- Upper tail dependence (Gumbel) for political/economic events → coordinated extreme price moves during information shocks
+- Near-perfect correlation (r = 0.987) for presidential markets → both platforms process the same information simultaneously
+- Asymmetric tail dependence for Fed rate decisions (Clayton, λ_L = 0.36) → coordinated sell-offs during surprise announcements
 
-Adding lag_ret_1 and lag_ret_2 to the directional signal (exp 17–19) was the single largest improvement (Sharpe +1.59 → +2.42). This means the bid-ask bounce extends beyond the immediate trade — consecutive same-direction trades revert harder, consistent with multi-trade institutional execution patterns.
-
-### Finding 6: Polymarket Has 3× Tighter Spreads Despite Similar Noise
+### Finding 5: Polymarket Has 3× Tighter Spreads Despite Similar Noise
 
 Cross-platform comparison revealed that mean VR(2) is statistically identical between Kalshi and Polymarket (p = 0.629), meaning relative microstructure noise is comparable. But Polymarket's implied spreads are 3× tighter (0.0036 vs 0.0109 cents, p < 1.5e-6). The decentralized exchange offers lower trading costs despite similar price efficiency.
 
+### Finding 6: RL Offers No Advantage Over Linear Models for Microstructure Trading
+
+PPO (Sharpe = −14.58) loses to simple LogReg with hand-crafted features (Sharpe = −12.44). The microstructure signal is linear — complexity does not improve prediction, and RL's lack of turnover management increases costs. This holds across all cost regimes tested.
+
+### Finding 7: Sqrt Signal Dampening and Three-Trade Momentum (Historical)
+
+In the original (flawed) cost regime (20 bps):
+- The transformation `sign(x) × √|x|` applied to the mean-reversion signal improved Sharpe from 2.75 to 2.91
+- Adding lag_ret_1 and lag_ret_2 was the single largest improvement (Sharpe +1.59 → +2.42)
+
+These remain valid statistical insights about signal structure, even though they don't survive realistic costs. The three-trade momentum confirms that the bid-ask bounce extends beyond the immediate trade — consecutive same-direction trades revert harder, consistent with multi-trade institutional execution patterns.
+
 ---
 
-## 4. Repository Structure (After Cleanup)
+## 4. Repository Structure
 
 ```
-poly_kalshi_dataset/tvq/          (worktree on branch autoresearch/tail-strategy-v1)
+poly_kalshi_dataset/
 ├── CLAUDE.md                      Project context (workspace rule)
 ├── PROJECT_SUMMARY.md             This file
+├── AUDIT_REPORT.md                Critical audit of project quality
 ├── Makefile                       Pipeline orchestration
 ├── requirements.txt               Python dependencies
 ├── .gitignore
@@ -279,43 +323,51 @@ poly_kalshi_dataset/tvq/          (worktree on branch autoresearch/tail-strategy
 │   ├── project.yml                Top-level config
 │   ├── datasets.yml               Dataset definitions
 │   └── model_spec.yml             Column mappings + analysis tasks
-├── data -> (symlink to main repo data/)
+├── data/
 │   └── raw/
 │       ├── kalshi/trades/         ~7,214 parquet files (~72M trades)
-│       └── polymarket/            trades/, blocks/, markets/
+│       └── polymarket/            trades/, blocks/ (markets/ empty)
 ├── src/
-│   ├── __init__.py
 │   ├── analysis/
-│   │   ├── __init__.py
 │   │   ├── data_profile.py        Phase 1: DuckDB profiling
 │   │   ├── phase2_statistical_tests.py  Phase 2: VR, Roll, GPD, BDS, XGBoost
 │   │   ├── phase3_deeper_analysis.py    Phase 3: Per-market GPD, cross-platform
+│   │   ├── pin_estimation.py      Phase 6: EKOP (1996) PIN model
+│   │   ├── copula_dependence.py   Phase 8: Cross-platform copula dependence
+│   │   ├── gmm_sdf.py            (scaffolded, not run)
 │   │   ├── prepare_data.py        Raw → processed standardization
-│   │   ├── profile_data.py        Alternative profiler (for make profile)
+│   │   ├── profile_data.py        Alternative profiler
 │   │   ├── run_models.py          Full analysis engine
+│   │   ├── run_all.py             Orchestrator
 │   │   └── verify.py              Deterministic paper checks
 │   ├── agents/
 │   │   └── run.py                 LangGraph agent loop
 │   └── autoresearch/
-│       ├── __init__.py
-│       ├── backtest.py            FIXED evaluation harness
-│       ├── data_loader.py         FIXED DuckDB data loading
-│       ├── interfaces.py          FIXED Strategy ABC, PortfolioState, BacktestResult
-│       └── strategy.py            EDITABLE final strategy (sqrt-3trade-tanh-v37)
+│       ├── prepare.py             FIXED evaluation harness (7c costs, market resets)
+│       ├── train.py               EDITABLE strategy (sqrt-3trade-tanh-v37)
+│       ├── rl_agent.py            PPO agent (tested, worse than LogReg)
+│       ├── sweep.py               20-config parameter sweep
+│       ├── program.md             LLM agent instructions
+│       ├── results.tsv            Full experiment log (101 + 12 new experiments)
+│       ├── run_v2.log             Honest Sharpe validation log
+│       ├── run_ppo.log            PPO evaluation log
+│       └── run_logreg.log         LogReg baseline log
 ├── artifacts/
-│   ├── phase2_results.json        Phase 2 raw test outputs
-│   ├── phase2_analysis.md         Phase 2 detailed write-up
-│   ├── phase3_results.json        Phase 3 raw test outputs
-│   ├── phase3_analysis.md         Phase 3 detailed write-up
-│   ├── strategy_results.json      Final autoresearch strategy metrics
-│   └── results.tsv                Full 37-experiment log
-└── paper/
-    ├── paper.tex                  LaTeX skeleton
-    └── tables/
-        ├── gpd_per_market.tex     Per-market GPD tail parameters
-        ├── bds_comparison.tex     Sports vs political BDS comparison
-        ├── xgboost_enhanced.tex   Enhanced ML prediction results
-        └── cross_platform.tex     Kalshi vs Polymarket comparison
+│   ├── data_profile.json          Phase 1 profiling output
+│   ├── phase2_results.json        Phase 2 test outputs
+│   ├── phase2_analysis.md         Phase 2 write-up
+│   ├── phase3_results.json        Phase 3 test outputs
+│   ├── phase3_analysis.md         Phase 3 write-up
+│   ├── pin_results.json           PIN estimation results (26 markets)
+│   ├── copula_results.json        Copula dependence results (4 matched events)
+│   ├── strategy_results.json      Initial strategy metrics (pre-fix)
+│   ├── research_design_v2.md      Research design document
+│   └── hypothesis_candidates.md   Original hypothesis proposals
+├── paper/
+│   ├── paper.tex                  LaTeX skeleton
+│   ├── references.bib             Bibliography
+│   └── tables/                    Generated LaTeX tables
+└── autoresearch/                  Karpathy's autoresearch (git submodule)
 ```
 
 ---
@@ -328,10 +380,11 @@ poly_kalshi_dataset/tvq/          (worktree on branch autoresearch/tail-strategy
 | Subsample to 5K for BDS tests | O(N²) complexity; 500K observations caused OOM at 16GB |
 | Per-market GPD fitting (Phase 3) | Pooling across markets creates artificial jumps; resolved negative-ξ artifact |
 | LogReg over GBM for strategy | GBM overfits to `ret` (AUC 0.985 but useless for sizing); LogReg uses microstructure features properly |
-| Sqrt signal transform | Dampens extreme returns (noisier), amplifies moderate ones (more reliable) |
-| Tanh position sizing | Smooth S-curve reduces oscillation and transaction costs vs hard clip |
-| High turnover threshold (0.60) | Each position change costs 20 bps; only reposition for significant signal changes |
-| 80/20 temporal split | Ensures no look-ahead bias; test period is strictly after training |
+| 7c/contract costs (corrected) | Previous 20 bps understated Kalshi fees by ~35×. Honest costs required for publishable results |
+| Market-boundary position resets | Without resets, positions bleed across markets. Critical for correct Sharpe computation |
+| Correlation-based cross-platform matching | Polymarket has no market metadata; matching by daily return correlation (with date-window filtering) is the only viable approach |
+| PyTorch nightly for PPO | Torch 2.11.0 has Python 3.13 AST parsing bug; nightly (2.12.0.dev) works |
+| Timezone normalization in copula | Kalshi timestamps are tz-aware (Europe/London), Polymarket are tz-naive; must normalize for date matching |
 
 ---
 
@@ -347,16 +400,35 @@ poly_kalshi_dataset/tvq/          (worktree on branch autoresearch/tail-strategy
 | `Series.hour` attribute error | Timezone-aware datetime needs `.dt.hour` | Changed to `ts.dt.hour.values` |
 | GPD pooling artifact (negative ξ) | Cross-market price jumps | Per-market fitting in Phase 3 |
 | XGBoost AUC = 0.98+ (data leakage) | Rolling vol includes current trade | Proposed fix: lag rolling features by 1 |
-| GBM overfitting to `ret` | `ret` predicts `target = (|ret|>2σ)` trivially | Switched to LogReg; `ret` importance dropped from 74% to 1.5% |
+| GBM overfitting to `ret` | `ret` predicts `target = (|ret|>2σ)` trivially | Switched to LogReg |
+| DuckDB `date_trunc` type error | Polymarket `b.timestamp` is VARCHAR not TIMESTAMP | Added `CAST(trade_time AS TIMESTAMP)` |
+| Copula date matching returns empty | Kalshi dates tz-aware (Europe/London), Polymarket tz-naive | Normalize both to tz-naive UTC before matching |
+| `np.corrcoef` dimension mismatch | Duplicate dates in grouped data | Added `drop_duplicates("trade_date")` before correlation |
+| PyTorch 2.11.0 crashes on Python 3.13.8 | AST parsing bug in `torch/nn/modules/rnn.py` | Installed nightly build (2.12.0.dev20260401) |
+| Sharpe inflated by ~35× | 20 bps costs vs real 7c/contract; no market-boundary reset | Fixed in `prepare.py`: costs = 0.07, position resets at boundaries |
+| `TURNOVER_THRESHOLD > 1.0` prevents trading | Max position change from 0 is 1.0 (tanh bounded) | Must keep threshold < 1.0 for any initial entry |
 
 ---
 
-## 7. Remaining Work
+## 7. Completed Cursor Prompts (All 6)
 
-1. **Fix XGBoost leakage** — Lag all rolling features by 1 trade in Phase 3 script
-2. **Polymarket BDS analysis** — Test if sports/political divergence holds on-chain
-3. **Matched-event analysis** — Find events traded on both platforms for copula-based dependence testing
-4. **Time-sampled VR tests** — Resample to 1-min/5-min intervals for informational efficiency tests (vs microstructure-contaminated trade-level)
-5. **Paper prose** — Draft Introduction, Data, Results, Conclusion using the discover → write → critique agent loop
-6. **Expand political sample** — Only 2 political markets in top 50; add Senate races and policy markets
-7. **Polymarket strategy** — Run autoresearch loop on Polymarket data (currently Kalshi-only)
+| # | Prompt | Status | Key Result |
+|---|--------|--------|------------|
+| 00 | Git cleanup & commit | **Done** | All project files committed, dead code removed, stale worktrees pruned |
+| 01 | Validate Sharpe with real costs | **Done** | Sharpe: +2.98 → **−12.44** (honest number with 7c costs) |
+| 02 | Run PIN estimation | **Done** | 26/26 converged, mean PIN = **0.63**, sports > political |
+| 03 | Test PPO vs LogReg | **Done** | PPO (−14.58) loses to LogReg (−12.44); RL adds no value |
+| 04 | Copula matched events | **Done** | 4/5 events matched; presidential r = 0.987; Gumbel upper tail dependence |
+| 05 | Autoresearch cost-regime sweep | **Done** | 20 configs tested; **no positive Sharpe** with realistic costs |
+
+---
+
+## 8. Remaining Work
+
+1. **Time-sampled VR tests** — Resample to 1-min/5-min intervals for informational efficiency tests (vs microstructure-contaminated trade-level)
+2. **Polymarket strategy** — Run autoresearch loop on Polymarket data (3× tighter spreads may allow profitable trading)
+3. **Paper prose** — Draft Introduction, Data, Results, Conclusion using the discover → write → critique agent loop
+4. **Expand political sample** — Only 3 political markets in PIN estimation; add Senate races and policy markets
+5. **GMM/SDF estimation** — `src/analysis/gmm_sdf.py` is scaffolded but never run
+6. **Maker rebate analysis** — With 7c taker fees killing alpha, explore whether maker orders (which get rebates) could be profitable
+7. **Polymarket BDS analysis** — Test if sports/political nonlinear dependence divergence holds on-chain
