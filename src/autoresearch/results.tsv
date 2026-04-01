@@ -103,3 +103,13 @@ f7e0818	3.476468	0.8146	discard	adaptive blend (worse)
 73dce0d	-14.752707	0.8161	keep	validation: 50 markets, 7c costs, market-boundary resets (honest baseline)
 844317d	-12.444913	0.8262	keep	v2: realistic costs (7c/contract), market-boundary reset, 50 markets
 bb8ced3	-14.581683	0.5413	discard	PPO 50ep sharpe-shaped: worse than logreg, mean_pos=1.0, no turnover mgmt
+b6941c9	0.000000	0.0	keep	sweep: 20 configs tested, all negative. Best non-trivial: scale_0.3 = -7.43
+b6941c9	-7.434200	0.8262	keep	best: SIGNAL_SCALE=0.30, mean_pos=0.058, totalret=-201
+b6941c9	-7.525700	0.8262	discard	no_dir_small_pos: scale=0.30+no_direction, mean_pos=0.098
+b6941c9	-7.633700	0.8262	discard	scale_0.5: bigger positions worse
+b6941c9	-8.436600	0.8262	discard	turnover_0.99: threshold too high
+b6941c9	-8.545100	0.8262	discard	boundary_heavy: boundary_coeff=5 not enough
+b6941c9	-10.176300	0.8262	discard	scale_0.1: too small to have edge but costs dominate
+b6941c9	-10.202900	0.8262	discard	momentum_v1: following trend equally bad
+b6941c9	-12.247000	0.8262	discard	enter_hold_v1: static positions lose due to wrong initial direction
+b6941c9	-12.444900	0.8262	keep	baseline_v2: original strategy with realistic costs
