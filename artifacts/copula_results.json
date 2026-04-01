@@ -1,0 +1,487 @@
+{
+  "n_events": 6,
+  "data_source": "mixed",
+  "events": [
+    {
+      "event_name": "presidential_2024",
+      "best_copula": "gumbel",
+      "params": {
+        "param_0": 1.414633
+      },
+      "log_likelihood": 7.1153,
+      "aic": -12.2307,
+      "bic": -10.1702,
+      "lambda_upper": 0.36771,
+      "lambda_lower": 0.0,
+      "n_obs": 58,
+      "kendall_tau": 0.202662,
+      "spearman_rho": 0.287151,
+      "all_fits": [
+        {
+          "name": "gaussian",
+          "params": {
+            "param_0": 0.438298
+          },
+          "log_likelihood": 5.0987,
+          "aic": -8.1975,
+          "bic": -6.137,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "student_t",
+          "params": {
+            "param_0": -0.00157,
+            "param_1": 7.498697
+          },
+          "log_likelihood": -10000000000.0,
+          "aic": 20000000004.0,
+          "bic": 20000000008.1209,
+          "lambda_upper": 0.01809,
+          "lambda_lower": 0.01809,
+          "converged": true
+        },
+        {
+          "name": "clayton",
+          "params": {
+            "param_0": 0.542517
+          },
+          "log_likelihood": 3.4542,
+          "aic": -4.9083,
+          "bic": -2.8479,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.278691,
+          "converged": true
+        },
+        {
+          "name": "gumbel",
+          "params": {
+            "param_0": 1.414633
+          },
+          "log_likelihood": 7.1153,
+          "aic": -12.2307,
+          "bic": -10.1702,
+          "lambda_upper": 0.36771,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "frank",
+          "params": {
+            "param_0": 1.984005
+          },
+          "log_likelihood": 2.6864,
+          "aic": -3.3727,
+          "bic": -1.3123,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        }
+      ]
+    },
+    {
+      "event_name": "fed_rate",
+      "best_copula": "clayton",
+      "params": {
+        "param_0": 0.678614
+      },
+      "log_likelihood": 2.1696,
+      "aic": -2.3392,
+      "bic": -1.007,
+      "lambda_upper": 0.0,
+      "lambda_lower": 0.360085,
+      "n_obs": 28,
+      "kendall_tau": 0.082338,
+      "spearman_rho": 0.13253,
+      "all_fits": [
+        {
+          "name": "gaussian",
+          "params": {
+            "param_0": 0.284328
+          },
+          "log_likelihood": 0.7698,
+          "aic": 0.4604,
+          "bic": 1.7926,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "student_t",
+          "params": {
+            "param_0": -0.264062,
+            "param_1": 8.172941
+          },
+          "log_likelihood": -10000000000.0,
+          "aic": 20000000004.0,
+          "bic": 20000000006.6644,
+          "lambda_upper": 0.003137,
+          "lambda_lower": 0.003137,
+          "converged": true
+        },
+        {
+          "name": "clayton",
+          "params": {
+            "param_0": 0.678614
+          },
+          "log_likelihood": 2.1696,
+          "aic": -2.3392,
+          "bic": -1.007,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.360085,
+          "converged": true
+        },
+        {
+          "name": "gumbel",
+          "params": {
+            "param_0": 1.177629
+          },
+          "log_likelihood": 0.5833,
+          "aic": 0.8334,
+          "bic": 2.1656,
+          "lambda_upper": 0.198543,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "frank",
+          "params": {
+            "param_0": 1.011438
+          },
+          "log_likelihood": 0.2943,
+          "aic": 1.4113,
+          "bic": 2.7435,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        }
+      ]
+    },
+    {
+      "event_name": "btc_price",
+      "best_copula": "gaussian",
+      "params": {
+        "param_0": 0.829613
+      },
+      "log_likelihood": 8.5609,
+      "aic": -15.1218,
+      "bic": -14.2315,
+      "lambda_upper": 0.0,
+      "lambda_lower": 0.0,
+      "n_obs": 18,
+      "kendall_tau": 0.555556,
+      "spearman_rho": 0.783282,
+      "all_fits": [
+        {
+          "name": "gaussian",
+          "params": {
+            "param_0": 0.829613
+          },
+          "log_likelihood": 8.5609,
+          "aic": -15.1218,
+          "bic": -14.2315,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "student_t",
+          "params": {
+            "param_0": 0.912349,
+            "param_1": 5.205341
+          },
+          "log_likelihood": -10000000000.0,
+          "aic": 20000000004.0,
+          "bic": 20000000005.7807,
+          "lambda_upper": 0.612375,
+          "lambda_lower": 0.612375,
+          "converged": true
+        },
+        {
+          "name": "clayton",
+          "params": {
+            "param_0": 2.214436
+          },
+          "log_likelihood": 7.4069,
+          "aic": -12.8138,
+          "bic": -11.9234,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.73124,
+          "converged": true
+        },
+        {
+          "name": "gumbel",
+          "params": {
+            "param_0": 2.442661
+          },
+          "log_likelihood": 7.858,
+          "aic": -13.7161,
+          "bic": -12.8257,
+          "lambda_upper": 0.671876,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "frank",
+          "params": {
+            "param_0": 7.634334
+          },
+          "log_likelihood": 7.7059,
+          "aic": -13.4119,
+          "bic": -12.5215,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        }
+      ]
+    },
+    {
+      "event_name": "nfl_games",
+      "best_copula": "frank",
+      "params": {
+        "param_0": 3.607834
+      },
+      "log_likelihood": 42.7634,
+      "aic": -83.5269,
+      "bic": -79.8231,
+      "lambda_upper": 0.0,
+      "lambda_lower": 0.0,
+      "n_obs": 300,
+      "kendall_tau": 0.349967,
+      "spearman_rho": 0.486941,
+      "all_fits": [
+        {
+          "name": "gaussian",
+          "params": {
+            "param_0": 0.458656
+          },
+          "log_likelihood": 33.7368,
+          "aic": -65.4737,
+          "bic": -61.7699,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "student_t",
+          "params": {
+            "param_0": -0.253872,
+            "param_1": 4.236136
+          },
+          "log_likelihood": -10000000000.0,
+          "aic": 20000000004.0,
+          "bic": 20000000011.4076,
+          "lambda_upper": 0.029566,
+          "lambda_lower": 0.029566,
+          "converged": true
+        },
+        {
+          "name": "clayton",
+          "params": {
+            "param_0": 0.689089
+          },
+          "log_likelihood": 27.4976,
+          "aic": -52.9952,
+          "bic": -49.2914,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.365719,
+          "converged": true
+        },
+        {
+          "name": "gumbel",
+          "params": {
+            "param_0": 1.481867
+          },
+          "log_likelihood": 41.0414,
+          "aic": -80.0829,
+          "bic": -76.3791,
+          "lambda_upper": 0.403597,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "frank",
+          "params": {
+            "param_0": 3.607834
+          },
+          "log_likelihood": 42.7634,
+          "aic": -83.5269,
+          "bic": -79.8231,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        }
+      ]
+    },
+    {
+      "event_name": "cpi_inflation",
+      "best_copula": "gumbel",
+      "params": {
+        "param_0": 1.21847
+      },
+      "log_likelihood": 1.002,
+      "aic": -0.004,
+      "bic": 1.3282,
+      "lambda_upper": 0.233735,
+      "lambda_lower": 0.0,
+      "n_obs": 28,
+      "kendall_tau": 0.132275,
+      "spearman_rho": 0.199234,
+      "all_fits": [
+        {
+          "name": "gaussian",
+          "params": {
+            "param_0": 0.301743
+          },
+          "log_likelihood": 0.8793,
+          "aic": 0.2413,
+          "bic": 1.5736,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "student_t",
+          "params": {
+            "param_0": 0.825772,
+            "param_1": 8.078693
+          },
+          "log_likelihood": -10000000000.0,
+          "aic": 20000000004.0,
+          "bic": 20000000006.6644,
+          "lambda_upper": 0.376055,
+          "lambda_lower": 0.376055,
+          "converged": true
+        },
+        {
+          "name": "clayton",
+          "params": {
+            "param_0": 0.309913
+          },
+          "log_likelihood": 0.5123,
+          "aic": 0.9753,
+          "bic": 2.3075,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.106823,
+          "converged": true
+        },
+        {
+          "name": "gumbel",
+          "params": {
+            "param_0": 1.21847
+          },
+          "log_likelihood": 1.002,
+          "aic": -0.004,
+          "bic": 1.3282,
+          "lambda_upper": 0.233735,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "frank",
+          "params": {
+            "param_0": 1.226429
+          },
+          "log_likelihood": 0.534,
+          "aic": 0.932,
+          "bic": 2.2642,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        }
+      ]
+    },
+    {
+      "event_name": "aggregate_cross_platform",
+      "best_copula": "clayton",
+      "params": {
+        "param_0": 0.13157
+      },
+      "log_likelihood": 0.5619,
+      "aic": 0.8763,
+      "bic": 3.511,
+      "lambda_upper": 0.0,
+      "lambda_lower": 0.005153,
+      "n_obs": 103,
+      "kendall_tau": 0.056354,
+      "spearman_rho": 0.075144,
+      "all_fits": [
+        {
+          "name": "gaussian",
+          "params": {
+            "param_0": 0.068349
+          },
+          "log_likelihood": 0.205,
+          "aic": 1.59,
+          "bic": 4.2248,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "student_t",
+          "params": {
+            "param_0": 0.837416,
+            "param_1": 2.100504
+          },
+          "log_likelihood": -10000000000.0,
+          "aic": 20000000004.0,
+          "bic": 20000000009.2695,
+          "lambda_upper": 0.635573,
+          "lambda_lower": 0.635573,
+          "converged": true
+        },
+        {
+          "name": "clayton",
+          "params": {
+            "param_0": 0.13157
+          },
+          "log_likelihood": 0.5619,
+          "aic": 0.8763,
+          "bic": 3.511,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.005153,
+          "converged": true
+        },
+        {
+          "name": "gumbel",
+          "params": {
+            "param_0": 1.059795
+          },
+          "log_likelihood": 0.3843,
+          "aic": 1.2314,
+          "bic": 3.8661,
+          "lambda_upper": 0.076707,
+          "lambda_lower": 0.0,
+          "converged": true
+        },
+        {
+          "name": "frank",
+          "params": {
+            "param_0": 0.505923
+          },
+          "log_likelihood": 0.3199,
+          "aic": 1.3603,
+          "bic": 3.995,
+          "lambda_upper": 0.0,
+          "lambda_lower": 0.0,
+          "converged": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "best_copulas": {
+      "presidential_2024": "gumbel",
+      "fed_rate": "clayton",
+      "btc_price": "gaussian",
+      "nfl_games": "frank",
+      "cpi_inflation": "gumbel",
+      "aggregate_cross_platform": "clayton"
+    },
+    "mean_lambda_upper": 0.100241,
+    "mean_lambda_lower": 0.060873,
+    "mean_kendall_tau": 0.229859
+  }
+}

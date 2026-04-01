@@ -404,14 +404,22 @@ def _load_kalshi_daily_returns(con: duckdb.DuckDBPyConnection,
 
 def _load_polymarket_daily_returns(con: duckdb.DuckDBPyConnection,
                                     max_markets: int = 10,
-                                    min_trades: int = 500) -> pd.DataFrame:
+                                    min_trades: int = 500,
+                                    date_start: str = None,
+                                    date_end: str = None) -> pd.DataFrame:
     """
     Load daily returns for top Polymarket markets.
 
     Polymarket price derivation:
-    - maker_asset_id = '0': buyer pays USDC → price = maker_amount / taker_amount
-    - maker_asset_id != '0': seller offers tokens → price = taker_amount / maker_amount
+    - maker_asset_id = '0': buyer pays USDC -> price = maker_amount / taker_amount
+    - maker_asset_id != '0': seller offers tokens -> price = taker_amount / maker_amount
+
+    If date_start/date_end provided, only loads markets active in that window.
     """
+    date_filter = ""
+    if date_start and date_end:
+        date_filter = f"AND CAST(b.timestamp AS TIMESTAMP) >= '{date_start}' AND CAST(b.timestamp AS TIMESTAMP) <= '{date_end}'"
+
     df = con.execute(f"""
         WITH poly_prices AS (
             SELECT
@@ -426,11 +434,12 @@ def _load_polymarket_daily_returns(con: duckdb.DuckDBPyConnection,
             JOIN read_parquet('{POLY_BLOCKS_GLOB}', union_by_name=true) b
               ON t.block_number = b.block_number
             WHERE b.timestamp IS NOT NULL
+              {date_filter}
         ),
         daily AS (
             SELECT
                 market_id,
-                DATE_TRUNC('day', trade_time) AS trade_date,
+                DATE_TRUNC('day', CAST(trade_time AS TIMESTAMP)) AS trade_date,
                 AVG(price) AS mid_price,
                 COUNT(*) AS n_trades
             FROM poly_prices
@@ -455,6 +464,11 @@ def _load_polymarket_daily_returns(con: duckdb.DuckDBPyConnection,
 
 def _compute_daily_returns(df: pd.DataFrame, id_col: str) -> pd.DataFrame:
     """Compute daily log-returns from mid-price series."""
+    df = df.copy()
+    if hasattr(df["trade_date"].dtype, "tz") and df["trade_date"].dtype.tz is not None:
+        df["trade_date"] = df["trade_date"].dt.tz_convert("UTC").dt.tz_localize(None)
+    df["trade_date"] = pd.to_datetime(df["trade_date"]).dt.normalize()
+
     results = []
     for mid, grp in df.groupby(id_col):
         grp = grp.sort_values("trade_date")
@@ -484,22 +498,29 @@ def _match_by_date_correlation(kalshi_rets: pd.DataFrame,
     poly_markets = poly_rets["market_id"].unique()
 
     for k_mkt in kalshi_markets:
-        k_df = kalshi_rets[kalshi_rets["ticker"] == k_mkt].set_index("trade_date")
+        k_sub = kalshi_rets[kalshi_rets["ticker"] == k_mkt].drop_duplicates("trade_date")
+        k_df = k_sub.set_index("trade_date")
 
         best_corr = 0
         best_poly = None
         best_n = 0
 
         for p_mkt in poly_markets:
-            p_df = poly_rets[poly_rets["market_id"] == p_mkt].set_index("trade_date")
+            p_sub = poly_rets[poly_rets["market_id"] == p_mkt].drop_duplicates("trade_date")
+            p_df = p_sub.set_index("trade_date")
 
-            # Find overlapping dates
             common = k_df.index.intersection(p_df.index)
             if len(common) < min_overlap_days:
                 continue
 
-            corr = np.corrcoef(k_df.loc[common, "ret"].values,
-                               p_df.loc[common, "ret"].values)[0, 1]
+            k_vals = k_df.loc[common, "ret"].values
+            p_vals = p_df.loc[common, "ret"].values
+            if len(k_vals) != len(p_vals) or len(k_vals) < min_overlap_days:
+                continue
+
+            corr = np.corrcoef(k_vals, p_vals)[0, 1]
+            if not np.isfinite(corr):
+                continue
 
             if abs(corr) > abs(best_corr):
                 best_corr = corr
@@ -535,11 +556,18 @@ def load_matched_event_returns(con: duckdb.DuckDBPyConnection,
     if kalshi_rets.empty:
         return None
 
-    print(f"  Found {kalshi_rets['ticker'].nunique()} Kalshi markets, "
-          f"loading Polymarket for matching...")
+    # Derive date window from Kalshi data to filter Polymarket
+    k_min_date = kalshi_daily["trade_date"].min()
+    k_max_date = kalshi_daily["trade_date"].max()
+    date_start = str(k_min_date)[:10]
+    date_end = str(k_max_date)[:10]
+    print(f"  Found {kalshi_rets['ticker'].nunique()} Kalshi markets "
+          f"({date_start} to {date_end}), loading Polymarket for matching...")
 
-    # Load top Polymarket markets for correlation matching
-    poly_daily = _load_polymarket_daily_returns(con, max_markets=20, min_trades=200)
+    poly_daily = _load_polymarket_daily_returns(
+        con, max_markets=30, min_trades=200,
+        date_start=date_start, date_end=date_end
+    )
     if poly_daily.empty:
         print(f"  No Polymarket data available")
         return None
@@ -549,7 +577,7 @@ def load_matched_event_returns(con: duckdb.DuckDBPyConnection,
         return None
 
     print(f"  Matching across {poly_rets['market_id'].nunique()} Polymarket markets...")
-    matches = _match_by_date_correlation(kalshi_rets, poly_rets, min_overlap_days=15)
+    matches = _match_by_date_correlation(kalshi_rets, poly_rets, min_overlap_days=10)
 
     if not matches:
         print(f"  No matches found for '{event_name}'")
