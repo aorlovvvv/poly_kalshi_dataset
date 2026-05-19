@@ -2,11 +2,34 @@
 
 This repository analyzes ~476 million prediction market trades across two platforms. The raw data (~36 GB compressed) is not included in this repo due to size constraints.
 
+## Primary Data Source
+
+**Dataset:** [Jon-Becker/prediction-market-analysis](https://github.com/jon-becker/prediction-market-analysis)
+
+The largest publicly available dataset of Polymarket and Kalshi market and trade data. Collected and maintained by Jon Becker.
+
+To download the dataset (~36 GB compressed):
+
+```bash
+# From the prediction-market-analysis repo:
+make setup
+# Downloads data.tar.zst from Cloudflare R2 and extracts to data/
+```
+
+Once extracted, move the contents into our `data/raw/` directory structure (see below).
+
+### Related Research Using This Dataset
+
+- Becker, J. (2026). *The Microstructure of Wealth Transfer in Prediction Markets*. [jbecker.dev](https://jbecker.dev/research/prediction-market-microstructure)
+- Le, N. A. (2026). *Decomposing Crowd Wisdom: Domain-Specific Calibration Dynamics in Prediction Markets*. [arXiv:2602.19520](https://arxiv.org/abs/2602.19520)
+- Akey P., Gregoire, V., Harvie, N., Martineau, C. (2026). *Who Wins and Who Loses In Prediction Markets?* [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6443103)
+- Vedova, J. (2026). *Who Profits from Prediction Markets? Execution, not Information*. [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6191618)
+
 ---
 
 ## Kalshi
 
-**Source:** [Kalshi](https://kalshi.com) — CFTC-regulated event contract exchange (US-based)
+**Platform:** [Kalshi](https://kalshi.com) — CFTC-regulated event contract exchange (US-based)
 
 | Dataset | Records | Files | Date Range |
 |---------|---------|-------|------------|
@@ -33,17 +56,11 @@ maker_fee = ceil(0.0175 × contracts × price × (1 - price))
 
 Max taker fee: 1.75¢/contract at 50¢. No settlement, membership, or withdrawal fees.
 
-### How to Obtain
-
-Kalshi provides historical trade data via their API: https://trading-api.readme.io/reference/getmarkettrades
-
-Bulk historical data may also be available through academic data agreements or third-party providers.
-
 ---
 
 ## Polymarket
 
-**Source:** [Polymarket](https://polymarket.com) — Decentralized prediction market on Polygon blockchain
+**Platform:** [Polymarket](https://polymarket.com) — Decentralized prediction market on Polygon blockchain
 
 | Dataset | Records | Files | Date Range |
 |---------|---------|-------|------------|
@@ -70,13 +87,6 @@ Polymarket trades have no explicit price field. Prices are derived:
 ### Timestamps
 
 Trades have no inline timestamp. Must join to `polymarket_blocks` table via `block_number` to get `timestamp`.
-
-### How to Obtain
-
-All Polymarket trades are on-chain (Polygon). Data can be obtained by:
-1. Indexing the Polygon blockchain directly (CTF Exchange and NegRisk CTF Exchange contracts)
-2. Using Polymarket's subgraph/API: https://docs.polymarket.com/
-3. Third-party blockchain data providers (e.g., Dune Analytics, Flipside Crypto)
 
 ---
 
@@ -105,9 +115,10 @@ Both platforms have data from **March 2023 – November 2025** (~32 months), ena
 
 ## Reproducing the Analysis
 
-1. Obtain raw parquet files and place them in `data/raw/` following the structure above
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the pipeline:
+1. Download the dataset from [Jon-Becker/prediction-market-analysis](https://github.com/jon-becker/prediction-market-analysis) (`make setup`)
+2. Place parquet files in `data/raw/` following the structure above
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run the pipeline:
    ```bash
    # Profile the raw data
    python3 -m src.analysis.data_profile
