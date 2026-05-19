@@ -240,8 +240,8 @@ def load_market_daily_counts(market_id: str, con: duckdb.DuckDBPyConnection) -> 
     df = con.execute(f"""
         SELECT
             DATE_TRUNC('day', created_time) AS trade_date,
-            SUM(CASE WHEN taker_side = 'yes' THEN 1 ELSE 0 END) AS buys,
-            SUM(CASE WHEN taker_side = 'no' THEN 1 ELSE 0 END) AS sells
+            SUM(CASE WHEN taker_side = 'yes' THEN COALESCE(count, 1) ELSE 0 END) AS buys,
+            SUM(CASE WHEN taker_side = 'no' THEN COALESCE(count, 1) ELSE 0 END) AS sells
         FROM read_parquet('{KALSHI_GLOB}', union_by_name=true)
         WHERE ticker = ?
           AND created_time IS NOT NULL

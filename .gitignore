@@ -1,26 +1,48 @@
-# data
-data/raw/
-data/processed/
+# Data (36 GB+ parquet files — too large for git)
+data/
 
-# artifacts (force-add key .md and .json files)
+# Artifacts (regenerable via pipeline)
 artifacts/
+
+# Paper outputs (regenerable)
 paper/*.pdf
 paper/tables/
 paper/figures/
 paper/results.tex
 
-# python
+# Python
 .venv/
+venv/
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment / secrets
 .env
+.env.*
 
-# IDE
+# IDE / editor
 .cursor/
+.vscode/
+*.swp
+*.swo
+*~
 
-# task prompts (ephemeral)
+# Task prompts (ephemeral working docs)
 cursor_prompts/
 
-# autoresearch experiment artifacts (untracked by design)
+# Autoresearch experiment logs (regenerable)
 src/autoresearch/results.tsv
-src/autoresearch/run.log
+src/autoresearch/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+*.cache

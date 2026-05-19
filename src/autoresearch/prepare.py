@@ -36,13 +36,15 @@ from sklearn.metrics import roc_auc_score
 # Constants (fixed, do not modify)
 # ---------------------------------------------------------------------------
 
-# Kalshi maker/taker fees: ~7 cents per contract. For a contract at price p,
-# the round-trip cost is ~0.07 / p. At p=0.50 that's 14% round-trip, or ~700bps
-# one-way. We model this as a fixed per-unit cost of 7 cents (0.07 in price units).
-# This is conservative — it uses the full taker fee regardless of maker rebates.
-# Previous value was 20bps (0.002), which understated real costs by ~10-20x.
-TRANSACTION_COST_PER_CONTRACT = 0.07   # 7 cents per contract (Kalshi taker fee)
-ANNUALIZATION_FACTOR = np.sqrt(252)
+# Kalshi taker fee: 7% of expected earnings per contract.
+#   fee = 0.07 * price * (1 - price)
+# This is parabolic: max 1.75¢ at p=0.50, drops to 0.63¢ at p=0.10 or p=0.90,
+# and to 0.33¢ at p=0.05 or p=0.95. Source: kalshi.com/docs/kalshi-fee-schedule.pdf
+# Maker fee is 25% of taker fee (0.0175 * p * (1-p)).
+# We use the taker fee (conservative). The cost function is applied per-trade
+# in _backtest_stream using the current price, not a flat per-unit charge.
+TAKER_FEE_RATE = 0.07  # 7% of expected earnings (Kalshi taker fee)
+ANNUALIZATION_FACTOR = np.sqrt(365)  # prediction markets trade 24/7/365
 
 MAX_MARKETS = 50
 MAX_TRADES_PER_MARKET = 50_000
@@ -127,7 +129,7 @@ def _add_features(df: pd.DataFrame) -> pd.DataFrame:
     df["lag_ret_2"] = df["ret"].shift(2)
     df["lag_size_1"] = df["trade_size"].shift(1)
     df["lag_taker_1"] = df["taker_buy"].shift(1)
-    df["buy_imbalance_20"] = df["taker_buy"].rolling(20, min_periods=1).mean()
+    df["buy_imbalance_20"] = df["taker_buy"].shift(1).rolling(20, min_periods=1).mean()
 
     abs_ret = df["ret"].abs()
     df["rolling_vol_10"] = abs_ret.shift(1).rolling(10, min_periods=1).std()
@@ -242,15 +244,22 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
 # Evaluation (DO NOT CHANGE — this is the fixed metric)
 # ---------------------------------------------------------------------------
 
+def _kalshi_taker_fee(price: float, trade_delta: float) -> float:
+    """Kalshi taker fee: 7% of expected earnings = 0.07 * p * (1-p) per contract.
+    We scale by |trade_delta| since position is in [-1, 1] (1.0 = 1 contract)."""
+    p = np.clip(price, 0.01, 0.99)
+    fee_per_contract = TAKER_FEE_RATE * p * (1.0 - p)
+    return abs(trade_delta) * fee_per_contract
+
+
 def _backtest_stream(strategy: Strategy, tail_probs: np.ndarray,
                      next_rets: np.ndarray, market_ids: np.ndarray,
-                     cost_per_unit: float) -> tuple[np.ndarray, list[float]]:
+                     prices: np.ndarray) -> tuple[np.ndarray, list[float]]:
     """
     Walk-forward backtest that resets position at market boundaries.
 
-    When the market_id changes between consecutive rows, position resets to 0.
-    This avoids the cross-market position blurring problem where a position
-    sized for Market A earns Market B's return.
+    Uses Kalshi's actual price-dependent taker fee: 0.07 * p * (1-p).
+    Position resets to 0 when market_id changes between consecutive rows.
 
     Returns (pnl_array, positions_list).
     """
@@ -263,11 +272,8 @@ def _backtest_stream(strategy: Strategy, tail_probs: np.ndarray,
     for i in range(n):
         cur_market = market_ids[i]
 
-        # Reset position when market changes — otherwise position sized for
-        # one market would earn returns from a different market.
         if cur_market != prev_market and prev_market is not None:
-            # Close out old position (pay cost to flatten)
-            close_cost = abs(state.position) * cost_per_unit
+            close_cost = _kalshi_taker_fee(prices[i], state.position)
             state.equity -= close_cost
             state.total_cost += close_cost
             state.position = 0.0
@@ -279,7 +285,7 @@ def _backtest_stream(strategy: Strategy, tail_probs: np.ndarray,
 
         desired = np.clip(strategy.size_position(tail_probs[i], state), -1.0, 1.0)
         trade_delta = abs(desired - state.position)
-        cost = trade_delta * cost_per_unit
+        cost = _kalshi_taker_fee(prices[i], trade_delta)
 
         pnl = desired * next_rets[i] - cost
         state.position = desired
@@ -326,7 +332,7 @@ def evaluate(strategy: Strategy, X_test: np.ndarray, y_test: np.ndarray,
     rows in the time-sorted stream. This prevents the cross-market blurring
     problem where a position sized for one market earns another market's return.
 
-    The primary metric is sharpe_ratio (daily-aggregated, annualized √252).
+    The primary metric is sharpe_ratio (daily-aggregated, annualized √365).
 
     NOTE on auc_roc: This metric is MEANINGLESS for this setup because the
     target = (|ret| > 2σ) and 'ret' is a feature. The AUC measures trivial
@@ -341,12 +347,11 @@ def evaluate(strategy: Strategy, X_test: np.ndarray, y_test: np.ndarray,
     except Exception:
         auc = 0.5
 
-    cost_per_unit = TRANSACTION_COST_PER_CONTRACT
     market_ids = test_df["market_id"].values
+    prices = test_df["price"].values
 
-    # Run market-aware backtest (position resets at market boundaries)
     pnl_arr, positions = _backtest_stream(
-        strategy, tail_probs, next_rets, market_ids, cost_per_unit
+        strategy, tail_probs, next_rets, market_ids, prices
     )
 
     pnl_clean = pnl_arr[~np.isnan(pnl_arr)]
@@ -390,6 +395,9 @@ def evaluate(strategy: Strategy, X_test: np.ndarray, y_test: np.ndarray,
         if per_market_sharpes else 0.0
     )
 
+    avg_price = float(np.mean(prices[~np.isnan(prices)])) if len(prices) > 0 else 0.5
+    avg_fee = TAKER_FEE_RATE * avg_price * (1.0 - avg_price)
+
     return {
         "sharpe_ratio": round(float(sharpe), 6),
         "sortino_ratio": round(float(sortino), 6),
@@ -401,6 +409,7 @@ def evaluate(strategy: Strategy, X_test: np.ndarray, y_test: np.ndarray,
         "n_days": n_days,
         "n_markets": test_df["market_id"].nunique(),
         "mean_position": round(float(np.mean(np.abs(positions))), 4),
+        "avg_fee_per_contract": round(avg_fee, 6),
         "avg_per_market_sharpe": avg_per_market_sharpe,
         "per_market_sharpes": {
             mid: round(float(s), 4)

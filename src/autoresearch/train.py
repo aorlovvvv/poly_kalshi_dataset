@@ -38,8 +38,8 @@ from prepare import (Strategy, PortfolioState, load_data, evaluate,
 # ---------------------------------------------------------------------------
 
 # Position sizing / risk
-TURNOVER_THRESHOLD = 0.75   # ignore position changes smaller than this
-SIGNAL_SCALE = 0.30         # reduced for high-cost regime (best non-trivial config)
+TURNOVER_THRESHOLD = 0.60   # ignore position changes smaller than this
+SIGNAL_SCALE = 1.50         # restored — cost model was wrong (was flat 7c, now 0.07*p*(1-p))
 TAIL_SCALE_FACTOR = 0.3     # how much to reduce position for tail events
 
 # Signal construction

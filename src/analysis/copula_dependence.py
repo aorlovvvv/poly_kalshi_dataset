@@ -265,7 +265,7 @@ def _fit_copula(copula_cls, u: np.ndarray, v: np.ndarray) -> dict:
         except Exception:
             continue
 
-    if best_params is None:
+    if best_params is None or best_ll > 1e8:
         return {"name": copula_cls.name, "converged": False}
 
     ll = -best_ll
@@ -694,17 +694,27 @@ def run_copula_analysis(output_path: str = None, use_synthetic_fallback: bool = 
     finally:
         con2.close()
 
-    # Save results
+    # Exclude synthetic-fallback events from summary statistics.
+    # Synthetic events are generated with n_obs=300; real matched events have n_obs < 200.
+    real_only = [r for r in results if r.n_obs < 200]
+
     output = {
         "n_events": len(results),
+        "n_events_real_data": len(real_only),
         "data_source": data_source,
         "events": [asdict(r) for r in results],
-        "summary": {
-            "best_copulas": {r.event_name: r.best_copula for r in results},
-            "mean_lambda_upper": round(float(np.mean([r.lambda_upper for r in results])), 6),
-            "mean_lambda_lower": round(float(np.mean([r.lambda_lower for r in results])), 6),
-            "mean_kendall_tau": round(float(np.mean([r.kendall_tau for r in results])), 6),
-        }
+        "summary_real_only": {
+            "best_copulas": {r.event_name: r.best_copula for r in real_only},
+            "mean_lambda_upper": round(float(np.mean([r.lambda_upper for r in real_only])), 6) if real_only else None,
+            "mean_lambda_lower": round(float(np.mean([r.lambda_lower for r in real_only])), 6) if real_only else None,
+            "mean_kendall_tau": round(float(np.mean([r.kendall_tau for r in real_only])), 6) if real_only else None,
+        },
+        "limitations": [
+            "Small sample sizes (n=18-58 daily observations) — copula parameter estimates have wide CIs",
+            "Tail dependence coefficients from n<50 samples are unreliable",
+            "Cross-platform matching uses return correlation heuristic, not verified event metadata",
+            "Synthetic fallback data (NFL) is excluded from summary statistics",
+        ],
     }
 
     with open(output_path, "w") as f:
